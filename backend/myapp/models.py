@@ -1,16 +1,9 @@
-# myapp/models.py
-
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.core.validators import MinLengthValidator, EmailValidator
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
-
-# =========================
-# USER MANAGER
-# =========================
 
 class UserManager(BaseUserManager):
 
@@ -45,11 +38,6 @@ class UserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True")
 
         return self.create_user(email, password, **extra_fields)
-
-
-# =========================
-# USER MODEL
-# =========================
 
 class User(AbstractBaseUser, PermissionsMixin):
 
@@ -124,35 +112,15 @@ class HealthProfile(models.Model):
         related_name="health_profile"
     )
 
-    # ------------------------
-    # Body Metrics
-    # ------------------------
-
     height_cm = models.FloatField(null=True, blank=True)
     weight_kg = models.FloatField(null=True, blank=True)
     sleep_hours = models.FloatField(null=True, blank=True)
-
-    # ------------------------
-    # Vital Signs
-    # ------------------------
-
     resting_heart_rate = models.PositiveIntegerField(null=True, blank=True)
-
     systolic_bp = models.PositiveIntegerField(null=True, blank=True)
     diastolic_bp = models.PositiveIntegerField(null=True, blank=True)
-
-    # ------------------------
-    # Lab Values
-    # ------------------------
-
     fasting_blood_sugar = models.FloatField(null=True, blank=True)
     total_cholesterol = models.FloatField(null=True, blank=True)
-
     vitamin_deficiency = models.JSONField(default=list, blank=True)
-
-    # ------------------------
-    # Lifestyle
-    # ------------------------
 
     SMOKING_CHOICES = [
         ("no", "No"),

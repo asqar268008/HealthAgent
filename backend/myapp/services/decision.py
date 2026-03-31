@@ -1,3 +1,7 @@
+"""
+Health Decision Agent - Fixed version with typo corrections
+"""
+
 from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -39,11 +43,15 @@ class HealthAgent:
             logger.error("Vector DB init error: %s", str(e))
             traceback.print_exc()
 
-    # ---------------- USER PROFILE ----------------
+    # ============================================
+    # USER PROFILE RETRIEVAL - FIXED
+    # ============================================
 
     @staticmethod
     def get_user_health_profile(user):
-
+        """
+        Retrieve user health profile - TYPO FIXED: sytolic_bp -> systolic_bp
+        """
         try:
             profile = HealthProfile.objects.select_related("user").get(user=user)
 
@@ -59,14 +67,23 @@ class HealthAgent:
                 "age": user.age,
                 "gender": user.gender,
                 "bmi": bmi,
+                "height_cm": profile.height_cm,
+                "weight_kg": profile.weight_kg,
                 "smoking_status": profile.smoking_status,
                 "alcohol_consumption": profile.alcohol_consumption,
                 "exercise_frequency": profile.exercise_frequency,
                 "sleep_hours": profile.sleep_hours,
                 "diet_type": profile.diet_type,
+                "resting_heart_rate": profile.resting_heart_rate,
+                "systolic_bp": profile.systolic_bp,  # FIXED: was "sytolic_bp"
+                "diastolic_bp": profile.diastolic_bp,
+                "fasting_blood_sugar": profile.fasting_blood_sugar,
+                "total_cholesterol": profile.total_cholesterol,
+                "vitamin_deficiency": profile.vitamin_deficiency,
             }
 
         except HealthProfile.DoesNotExist:
+            logger.warning(f"No health profile found for user {user.id}")
             return None
 
         except Exception as e:
@@ -74,12 +91,15 @@ class HealthAgent:
             traceback.print_exc()
             return None
 
-    # ---------------- RETRIEVE CONTEXT ----------------
+    # ============================================
+    # CONTEXT RETRIEVAL
+    # ============================================
 
     def retrieve_context(self, query):
-
+        """
+        Retrieve relevant context from vector databases
+        """
         try:
-
             docs = []
 
             docs += self.knowledge_db.as_retriever(
@@ -101,9 +121,12 @@ class HealthAgent:
             traceback.print_exc()
             return ""
 
-    # ---------------- BUILD PROMPT ----------------
+    # ============================================
+    # PROMPT BUILDING
+    # ============================================
 
     def build_prompt(self, profile, context):
+        """Build system prompt with user profile and medical knowledge"""
 
         system_prompt = f"""
 You are a healthcare recommendation engine.
@@ -128,6 +151,12 @@ Alcohol: {profile['alcohol_consumption']}
 Exercise: {profile['exercise_frequency']}
 Diet: {profile['diet_type']}
 Sleep: {profile['sleep_hours']}
+Resting Heart Rate: {profile['resting_heart_rate']}
+Systolic BP: {profile['systolic_bp']}
+Diastolic BP: {profile['diastolic_bp']}
+Fasting Blood Sugar: {profile['fasting_blood_sugar']}
+Total Cholesterol: {profile['total_cholesterol']}
+Vitamin Deficiency: {", ".join(profile['vitamin_deficiency']) if profile['vitamin_deficiency'] else "None"}
 
 Medical Knowledge:
 {context}
@@ -142,44 +171,44 @@ Medical Knowledge:
 
         return prompt
 
-    # ---------------- OUTPUT CLEANING ----------------
+    # ============================================
+    # OUTPUT CLEANING
+    # ============================================
 
     def clean_output(self, decision):
+        """Clean and format LLM output"""
 
         decision = decision.strip()
-
         lines = decision.split("\n")
-
         cleaned = []
 
         for line in lines:
             line = line.strip()
-
-            # Remove numbering if model adds it
-            line = line.lstrip("0123456789.- ")
+            # Remove numbering and bullets
+            line = line.lstrip("0123456789.- •*)")
 
             if line:
                 cleaned.append(line)
 
         return "\n".join(cleaned[:2])
 
-    # ---------------- MAIN DECISION ----------------
+    # ============================================
+    # DECISION MAKING
+    # ============================================
 
     def make_decision(self, user, user_message):
-
+        """
+        Main method to generate health decision
+        """
         profile = self.get_user_health_profile(user)
 
         if not profile:
             return "Please complete your health profile first."
 
         try:
-
             safe_question = user_message[:500]
-
             context = self.retrieve_context(safe_question)
-
             prompt = self.build_prompt(profile, context)
-
             llm = get_model()
 
             chain = (

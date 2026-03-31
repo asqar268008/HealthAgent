@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -190,9 +191,10 @@ select option{background:var(--surface)}
 <body>
 <div id="toast"></div>
 <header class="header">
-  <a class="logo-wrap" onclick="goToProfile(window._profileLoaded)" href="#">
-<!-- Example Health Logo -->
-    <img id="healthLogo" src="/static/health.jpeg" alt="Health Logo" style="cursor:pointer">  </a>
+  <a class="logo-wrap" onclick="goToProfile()" href="#">
+    <img src="{% static 'health.jpeg' %}" alt="logo" style="width:40px;height:40px;">
+  </a>
+
   <div class="header-right">
     <span class="header-badge">AI HEALTH MONITOR</span>
     <button class="btn-profile" id="headerProfileBtn" onclick="goToProfile()">✏️ Edit Profile</button>
@@ -480,233 +482,401 @@ select option{background:var(--surface)}
 </div>
 
 <script>
-function getCSRFToken(){return getCookie('csrftoken')}
-function getCookie(n){const v=document.cookie.match('(^|;) ?'+n+'=([^;]*)(;|$)');return v?v[2]:null}
-function escapeHtml(s){const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML}
-function showToast(msg,type='info'){const el=document.createElement('div');el.className='toast-msg'+(type==='error'?' error':'');el.textContent=msg;document.getElementById('toast').appendChild(el);setTimeout(()=>el.remove(),3800)}
-function markRadio(sel,all){all.forEach(id=>document.getElementById(id).classList.remove('selected'));document.getElementById(sel).classList.add('selected')}
-function goToProfile(editMode){
-  switchPage('profilePage');
-  document.getElementById('headerProfileBtn').style.display='none';
-  document.querySelector('.progress-wrap').style.display='block';
-  // Update hero text if editing existing profile
-  const heroTitle=document.querySelector('.profile-hero h1');
-  const heroSub=document.querySelector('.profile-hero p');
-  if(editMode&&heroTitle){heroTitle.innerHTML='Update Your Health<br/>Profile';if(heroSub)heroSub.textContent='Your profile is saved — update any fields and save again.';}
-  else if(heroTitle){heroTitle.innerHTML='Build Your Health<br/>Profile';if(heroSub)heroSub.textContent='Help HealthAgent understand your body — your data stays private and secure.';}
-}
-function goToDashboard(){switchPage('dashboardPage');document.getElementById('headerProfileBtn').style.display='flex';document.querySelector('.progress-wrap').style.display='none'}
-function switchPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const t=document.getElementById(id);t.style.display='block';requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('active')))}
-function updateProgress(){const inputs=document.querySelectorAll('#profilePage input:not([type=radio]),#profilePage select');const radios=['smoking'];let f=0,total=inputs.length+radios.length;inputs.forEach(i=>{if(i.value.trim())f++});radios.forEach(n=>{if(document.querySelector(`input[name="${n}"]:checked`))f++});const pct=Math.round((f/total)*100);document.getElementById('progressBar').style.width=pct+'%';const dots=['step1','step2','step3','step4'];dots.forEach((id,i)=>{const el=document.getElementById(id);const th=(i+1)*25;el.className='step-dot'+(pct>=th?' done':(pct>=(i*25)?' active':''))})}
-document.querySelectorAll('#profilePage input,#profilePage select').forEach(el=>{el.addEventListener('input',updateProgress);el.addEventListener('change',updateProgress)})
-function resetForm(){document.querySelectorAll('#profilePage input,#profilePage select').forEach(el=>{if(el.type==='radio')el.checked=false;else el.value=''});document.querySelectorAll('.radio-btn').forEach(el=>el.classList.remove('selected'));updateProgress();showToast('Form cleared')}
-async function submitProfile() {
+  // ================= CONFIG =================
+  const API = {
+    PROFILE_GET: "/api/health/profile/get/",
+    PROFILE_SAVE: "/api/health/profile/save/",
+    STRESS: "/api/health/stress/",
+    CHAT: "/api/health/chat/"
+  };
 
-    const bp = document.getElementById("bloodPressure").value.split("/");
+  let userProfile = null;
 
-    const data = {
-        height_cm: document.getElementById("height").value,
-        weight_kg: document.getElementById("weight").value,
-        sleep_hours: document.getElementById("sleepDuration").value,
+  // ================= UTIL =================
+  const Utils = {
+    getCSRFToken() {
+      return document.cookie
+        .split("; ")
+        .find(row => row.startsWith("csrftoken"))
+        ?.split("=")[1];
+    },
 
-        smoking_status: document.querySelector('input[name="smoking"]:checked')?.value,
-        alcohol_consumption: document.getElementById("alcoholConsumption").value,
-        exercise_frequency: document.getElementById("activityLevel").value,
-        diet_type: document.getElementById("dietType").value,
+    showToast(message, type = "info") {
+      const el = document.createElement("div");
+      el.className = `toast-msg ${type === "error" ? "error" : ""}`;
+      el.textContent = message;
 
-        resting_heart_rate: document.getElementById("heartRate").value,
+      document.getElementById("toast").appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    },
 
-        systolic_bp: bp[0] || null,
-        diastolic_bp: bp[1] || null,
+    safeNumber(value) {
+      const num = Number(value);
+      return isNaN(num) ? 0 : num;
+    }
+  };
 
-        fasting_blood_sugar: document.getElementById("bloodGlucose").value,
-        total_cholesterol: document.getElementById("cholesterol").value,
+  // ================= PROFILE =================
+  const Profile = {
 
-        vitamin_deficiency: document.getElementById("mentalHealthStatus").value
-    };
+    async load() {
+      try {
+        const res = await fetch(API.PROFILE_GET);
+        const data = await res.json();
 
-    const res = await fetch("/health/profile/save/", {
-        method: "POST",
-        headers: {
+        if (!data.profile) {
+          Navigation.toProfile();
+          return;
+        }
+
+        userProfile = data.profile;
+        localStorage.setItem("profile", JSON.stringify(userProfile));
+
+        this.fillForm(userProfile);
+        Dashboard.load(userProfile);
+        Navigation.toDashboard();
+
+      } catch {
+        Utils.showToast("Failed to load profile", "error");
+      }
+    },
+
+    fillForm(p) {
+      const set = (id, val) => document.getElementById(id).value = val || "";
+
+      set("height", p.height_cm);
+      set("weight", p.weight_kg);
+      set("sleepDuration", p.sleep_hours);
+      set("alcoholConsumption", p.alcohol);
+      set("dietType", p.diet);
+      set("heartRate", p.resting_heart_rate);
+      set("bloodGlucose", p.fasting_blood_sugar);
+      set("cholesterol", p.total_cholesterol);
+
+      if (p.systolic_bp && p.diastolic_bp) {
+        set("bloodPressure", `${p.systolic_bp}/${p.diastolic_bp}`);
+      }
+    },
+
+    async save() {
+      try {
+        const bpVal = document.getElementById("bloodPressure").value;
+        const [sys, dia] = bpVal.includes("/") ? bpVal.split("/") : [0, 0];
+
+        const data = {
+          height_cm: Utils.safeNumber(height.value),
+          weight_kg: Utils.safeNumber(weight.value),
+          sleep_hours: Utils.safeNumber(sleepDuration.value),
+
+          alcohol: alcoholConsumption.value,
+          diet: dietType.value,
+          exercise: activityLevel.value,
+
+          resting_heart_rate: Utils.safeNumber(heartRate.value),
+          systolic_bp: Utils.safeNumber(sys),
+          diastolic_bp: Utils.safeNumber(dia),
+
+          fasting_blood_sugar: Utils.safeNumber(bloodGlucose.value),
+          total_cholesterol: Utils.safeNumber(cholesterol.value)
+        };
+
+        const res = await fetch(API.PROFILE_SAVE, {
+          method: "POST",
+          headers: {
             "Content-Type": "application/json",
-            "X-CSRFToken": getCSRFToken()
-        },
-        body: JSON.stringify(data)
-    });
+            "X-CSRFToken": Utils.getCSRFToken()
+          },
+          body: JSON.stringify(data)
+        });
 
-    const result = await res.json();
+        const result = await res.json();
 
-    if(result.status){
-        showToast("Profile saved successfully");
-        goToDashboard();
-    }else{
-        showToast(result.error || "Error saving profile","error");
+        if (!result.success) throw new Error();
+
+        userProfile = result.profile;
+        localStorage.setItem("profile", JSON.stringify(userProfile));
+
+        Utils.showToast("Profile saved successfully");
+        Dashboard.load(userProfile);
+        Navigation.toDashboard();
+
+      } catch {
+        Utils.showToast("Failed to save profile", "error");
+      }
     }
-}
+  };
 
-async function loadProfile() {
+  // ================= DASHBOARD =================
+  const Dashboard = {
 
-    const response = await fetch("/health/profile/get/");
-    const data = await response.json();
+    load(p) {
+      if (!p?.height_cm || !p?.weight_kg || p.height_cm <= 0) {
+        Utils.showToast("Invalid height/weight", "error");
+        return;
+      }
 
-    if(!data.profile) return;
+      this.renderBMI(p);
+      this.renderSleep(p);
+      this.renderScore(p);
+    },
 
-    const p = data.profile;
+    renderBMI(p) {
+      const bmi = p.weight_kg / ((p.height_cm / 100) ** 2);
 
-    document.getElementById("height").value = p.height_cm || "";
-    document.getElementById("weight").value = p.weight_kg || "";
-    document.getElementById("sleepDuration").value = p.sleep_hours || "";
+      const elVal = document.getElementById("bmiValue");
+      const elCat = document.getElementById("bmiCategory");
 
-    document.getElementById("alcoholConsumption").value = p.alcohol_consumption || "";
-    document.getElementById("dietType").value = p.diet_type || "";
+      elVal.textContent = bmi.toFixed(1);
 
-    document.getElementById("heartRate").value = p.resting_heart_rate || "";
-    document.getElementById("bloodGlucose").value = p.fasting_blood_sugar || "";
-    document.getElementById("cholesterol").value = p.total_cholesterol || "";
+      let cat = "Normal";
+      if (bmi < 18.5) cat = "Underweight";
+      else if (bmi < 25) cat = "Normal";
+      else if (bmi < 30) cat = "Overweight";
+      else cat = "Obese";
 
-    if(p.systolic_bp && p.diastolic_bp){
-        document.getElementById("bloodPressure").value =
-            p.systolic_bp + "/" + p.diastolic_bp;
+      elCat.textContent = cat;
+
+      const pct = Math.min(Math.max((bmi - 15) / 25, 0), 1);
+      document.getElementById("needleGroup")
+        .style.transform = `rotate(${-90 + pct * 180}deg)`;
+    },
+
+    renderSleep(p) {
+      const sleep = p.sleep_hours || 0;
+      document.getElementById("sleepVal").textContent = sleep;
+
+      const circ = 251.2;
+      const percent = Math.min((sleep / 9) * 100, 100);
+
+      document.getElementById("sleepCircle")
+        .style.strokeDashoffset = circ - (circ * percent / 100);
+    },
+
+    renderScore(p) {
+      let score = 60;
+
+      const bmi = p.weight_kg / ((p.height_cm / 100) ** 2);
+
+      if (bmi >= 18.5 && bmi < 25) score += 15;
+      if (p.sleep_hours >= 7) score += 15;
+
+      score = Math.min(score, 100);
+
+      document.getElementById("scoreVal").textContent = score;
+
+      const circ = 276.5;
+      document.getElementById("scoreCircle")
+        .style.strokeDashoffset = circ - (circ * score / 100);
+
+      document.getElementById("scoreLabel").textContent =
+        score > 80 ? "Excellent" : score > 60 ? "Good" : "Needs Work";
     }
-    const bmi = p.weight_kg / ((p.height_cm/100)**2);
+  };
 
-    loadDashboard(
-        p.height_cm,
-        p.weight_kg,
-        p.sleep_hours,
-        bmi
-    );
-} window.onload = loadProfile;
+  // ================= STRESS =================
+  const Stress = {
 
-function loadDashboard(height,weight,sleep,bmi){
-  const bv=parseFloat(bmi);document.getElementById('bmiValue').textContent=bv.toFixed(1);
-  let cat='Normal',cc='var(--teal)';
-  if(bv<18.5){cat='Underweight';cc='var(--blue)'}else if(bv<25){cat='Normal';cc='var(--green)'}else if(bv<30){cat='Overweight';cc='var(--amber)'}else{cat='Obese';cc='var(--red)'}
-  const bc=document.getElementById('bmiCategory');bc.textContent=cat;bc.style.color=cc;rotateNeedle(bv);
-  const slp=parseFloat(sleep)||0;document.getElementById('sleepVal').textContent=slp.toFixed(1);
-  const spct=Math.min((slp/9)*100,100);const circ=251.2;
-  document.getElementById('sleepCircle').style.strokeDashoffset=circ-(circ*spct/100);
-  document.getElementById('sleepStatus').textContent=slp>=7?'Optimal rest':slp>=5?'Moderate — aim for 7h+':'Low — prioritise sleep';
-  let score=70;if(bv>=18.5&&bv<25)score+=10;if(slp>=7)score+=10;if(slp>=8.5)score-=5;score=Math.min(Math.max(score,10),99);
-  document.getElementById('scoreVal').textContent=score;
-  const sc2=276.5;document.getElementById('scoreCircle').style.strokeDashoffset=sc2-(sc2*score/100);
-  document.getElementById('scoreLabel').textContent=score>=80?'Excellent':score>=60?'Good':score>=40?'Fair':'Needs Work';
-}
-function rotateNeedle(bmi){const pct=Math.min(Math.max((bmi-15)/25,0),1);document.getElementById('needleGroup').style.transform=`rotate(${-90+pct*180}deg)`}
-function appendMsg(role,html,isHtml=false){const wrap=document.getElementById('chatMessages');const div=document.createElement('div');div.className='msg '+role;div.innerHTML=`<div class="msg-avatar ${role}">${role==='ai'?'HA':'Me'}</div><div class="msg-bubble">${html}</div>`;wrap.appendChild(div);wrap.scrollTop=wrap.scrollHeight}
-function showTyping(){const wrap=document.getElementById('chatMessages');const div=document.createElement('div');div.className='msg ai';div.id='typingIndicator';div.innerHTML=`<div class="msg-avatar ai">HA</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;wrap.appendChild(div);wrap.scrollTop=wrap.scrollHeight}
-function removeTyping(){const el=document.getElementById('typingIndicator');if(el)el.remove()}
-function updateRecommendations(text){
-  const list=document.getElementById('recoList');
-  const items=typeof text==='string'?text.split('\n').filter(s=>s.trim()):Array.isArray(text)?text:[String(text)];
-  list.innerHTML='';const icons=['🥦','💧','🏃','😴','🧘','💊'];
-  items.slice(0,6).forEach((item,i)=>{const li=document.createElement('li');li.className='reco-item';li.style.animationDelay=(i*.08)+'s';li.innerHTML=`<div class="reco-bullet">${icons[i%icons.length]}</div><span>${escapeHtml(item.replace(/^[-•*]\s*/,''))}</span>`;list.appendChild(li)})
-}
-// ── Stress Prediction Accordion ─────────────────────────────────────────────
-function toggleStressPanel(){
-  const fields=document.getElementById('stressFields');
-  const toggle=document.getElementById('stressToggle');
-  const isOpen=fields.classList.contains('open');
-  fields.classList.toggle('open',!isOpen);
-  toggle.classList.toggle('open',!isOpen);
-}
-async function predictStress() {
+    getInputs() {
+      const ids = ["sf-snr","sf-rr","sf-bt","sf-lm","sf-bo","sf-rem","sf-sh","sf-hr"];
 
-    const features = {
-        snr: document.getElementById("sf-snr").value,
-        rr: document.getElementById("sf-rr").value,
-        bt: document.getElementById("sf-bt").value,
-        lm: document.getElementById("sf-lm").value,
-        bo: document.getElementById("sf-bo").value,
-        rem: document.getElementById("sf-rem").value,
-        sh: document.getElementById("sf-sh").value,
-        hr: document.getElementById("sf-hr").value
-    };
+      for (let id of ids) {
+        if (!document.getElementById(id).value) {
+          Utils.showToast("Fill all stress inputs", "error");
+          return null;
+        }
+      }
 
-    const btn = document.getElementById("predictBtn");
-    btn.classList.add("loading");
+      return {
+        snr: +document.getElementById("sf-snr").value,
+        rr: +document.getElementById("sf-rr").value,
+        bt: +document.getElementById("sf-bt").value,
+        lm: +document.getElementById("sf-lm").value,
+        bo: +document.getElementById("sf-bo").value,
+        rem: +document.getElementById("sf-rem").value,
+        sh: +document.getElementById("sf-sh").value,
+        hr: +document.getElementById("sf-hr").value
+      };
+    },
 
-    try{
+    async predict() {
+      const features = this.getInputs();
+      if (!features) return;
 
-        const res = await fetch("/health/stress/",{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json",
-                "X-CSRFToken":getCSRFToken()
-            },
-            body:JSON.stringify(features)
+      const btn = document.getElementById("predictBtn");
+      btn.classList.add("loading");
+
+      try {
+        const res = await fetch(API.STRESS, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": Utils.getCSRFToken()
+          },
+          body: JSON.stringify(features)
         });
 
         const data = await res.json();
 
-        btn.classList.remove("loading");
+        this.render(data);
 
-        if(data.error){
-            showToast(data.error,"error");
-            return;
+      } catch {
+        Utils.showToast("Prediction failed", "error");
+      } finally {
+        btn.classList.remove("loading");
+      }
+    },
+
+    render(data) {
+      document.getElementById("stressResult").classList.add("visible");
+
+      document.getElementById("resultLevel").innerText =
+        data.stress_level || "Unknown";
+
+      document.getElementById("resultPct").innerText =
+        (data.stress_score || 0) + "%";
+
+      document.getElementById("resultBarFill").style.width =
+        (data.stress_score || 0) + "%";
+
+      document.querySelectorAll(".class-badge")
+        .forEach(el => el.classList.remove("active"));
+
+      document.getElementById("cb" + (data.class || 0))
+        ?.classList.add("active");
+
+      Recommendations.update(data.recommendations);
+    }
+  };
+
+  // ================= CHAT =================
+  const Chat = {
+
+    async send() {
+      const input = chatInput;
+      const message = input.value.trim();
+      if (!message) return;
+
+      UI.appendMsg("user", message);
+      input.value = "";
+
+      try {
+        const res = await fetch(API.CHAT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": Utils.getCSRFToken()
+          },
+          credentials: "include",
+          body: JSON.stringify({ message })
+        });
+
+        const data = await res.json();
+
+        UI.appendMsg("ai", data.decision || "No response");
+
+        if (data.recommendations) {
+          Recommendations.update(data.recommendations);
         }
 
-        document.getElementById("stressResult").classList.add("visible");
-        document.getElementById("resultLevel").innerText = data.stress_level;
-        document.getElementById("resultPct").innerText = data.stress_score + "%";
-
-        document.getElementById("resultBarFill").style.width = data.stress_score + "%";
-
-        updateRecommendations(data.recommendations);
-
-    }catch(err){
-        btn.classList.remove("loading");
-        showToast("Stress prediction failed","error");
+      } catch {
+        UI.appendMsg("ai", "⚠️ Server error");
+      }
     }
-}
+  };
 
-  async function sendMessage() {
+  // ================= UI =================
+  const UI = {
+    appendMsg(type, text) {
+      const container = document.getElementById("chatMessages");
 
-    const input = document.getElementById("chatInput");
-    const message = input.value.trim();
+      const msg = document.createElement("div");
+      msg.className = "msg " + type;
 
-    if(!message) return;
+      msg.innerHTML = `
+        <div class="msg-avatar ${type}">${type === "ai" ? "HA" : "U"}</div>
+        <div class="msg-bubble">${text}</div>
+      `;
 
-    appendMsg("user", escapeHtml(message));
-    input.value = "";
+      container.appendChild(msg);
+      container.scrollTop = container.scrollHeight;
+    }
+  };
 
-    showTyping();
+  // ================= RECOMMENDATIONS =================
+  const Recommendations = {
+    update(list) {
+      const el = document.getElementById("recoList");
+      el.innerHTML = "";
 
-    const response = await fetch("/health/chat/",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({message})
+      if (!list?.length) {
+        el.innerHTML = "<li>No recommendations</li>";
+        return;
+      }
+
+      list.forEach(item => {
+        const li = document.createElement("li");
+        li.className = "reco-item";
+        li.innerHTML = `<div class="reco-bullet">✓</div>${item}`;
+        el.appendChild(li);
+      });
+    }
+  };
+
+  // ================= NAVIGATION =================
+  const Navigation = {
+    toDashboard() {
+      profilePage.classList.remove("active");
+      dashboardPage.classList.add("active");
+    },
+    toProfile() {
+      dashboardPage.classList.remove("active");
+      profilePage.classList.add("active");
+    }
+  };
+
+  // ================= INIT =================
+  window.onload = () => {
+    const cached = localStorage.getItem("profile");
+
+    if (cached) {
+      userProfile = JSON.parse(cached);
+      Dashboard.load(userProfile);
+      Navigation.toDashboard();
+    }
+
+    Profile.load();
+  };
+  function markRadio(selectedId, groupIds) {
+    groupIds.forEach(id => {
+      document.getElementById(id).classList.remove("selected");
     });
+    document.getElementById(selectedId).classList.add("selected");
+  }
+  function resetForm() {
+    document.querySelectorAll("input, select").forEach(el => el.value = "");
+    Utils.showToast("Form reset");
+  }
+  function toggleStressPanel() {
+    const panel = document.getElementById("stressFields");
+    const btn = document.getElementById("stressToggle");
 
-    const result = await response.json();
+    panel.classList.toggle("open");
+    btn.classList.toggle("open");
+  }
+  function goToProfile() {
+    Navigation.toProfile();
+  }
+  function predictStress() {
+    Stress.predict();
+  }
 
-    removeTyping();
+  function sendMessage() {
+    Chat.send();
+  }
 
-    appendMsg("ai", result.decision || "No response");
-
-    if(result.recommendations){
-        updateRecommendations(result.recommendations);
-    }
-}
-// Load profile and fill form
-async function loadHealthProfile() {
-    const response = await fetch("/health/profile/get/");
-    const data = await response.json();
-
-    if (data.profile) {
-        for (let key in data.profile) {
-            const el = document.getElementById(key);
-            if (el) el.value = data.profile[key] || '';
-        }
-    }
-}
-
-// Bind click to health logo to reload profile
-document.getElementById("healthLogo").addEventListener("click", loadHealthProfile);
-
-// Load profile on page load too
-window.addEventListener("load", loadHealthProfile);
-window.addEventListener('DOMContentLoaded',()=>loadProfile());
+  function submitProfile() {
+    Profile.save();
+  }
 </script>
 </body>
 </html>
