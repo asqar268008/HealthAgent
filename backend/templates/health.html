@@ -11,7 +11,7 @@
   --bg:#0a0e1a; --surface:#111827; --card:#141c2e; --card2:#0f1628;
   --border:rgba(99,157,255,0.10); --border2:rgba(99,157,255,0.18);
   --teal:#00d4b4; --teal2:#00b89e; --blue:#639dff; --amber:#ffb740;
-  --red:#ff5f7e; --green:#43d98f; --text:#e2e8f8; --muted:#6b7a99; --dim:#3a4560;
+  --red:#ff5f7e; --green:#43d98f; --purple:#a78bfa; --text:#e2e8f8; --muted:#6b7a99; --dim:#3a4560;
   --radius:16px; --radius-sm:10px;
   --shadow:0 8px 32px rgba(0,0,0,0.45);
   --font-head:'Syne',sans-serif; --font-body:'DM Sans',sans-serif; --font-mono:'Space Mono',monospace;
@@ -19,182 +19,292 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 10% 10%,rgba(0,212,180,0.06) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 90% 80%,rgba(99,157,255,0.07) 0%,transparent 60%);pointer-events:none;z-index:0}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--surface)}::-webkit-scrollbar-thumb{background:var(--dim);border-radius:99px}
+body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 60% 40% at 10% 10%,rgba(0,212,180,0.06) 0%,transparent 60%),
+  radial-gradient(ellipse 50% 60% at 90% 80%,rgba(99,157,255,0.07) 0%,transparent 60%),
+  radial-gradient(ellipse 30% 30% at 50% 50%,rgba(167,139,250,0.03) 0%,transparent 60%);
+  pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--dim);border-radius:99px}
 .page{position:relative;z-index:1;opacity:0;transform:translateY(20px);transition:opacity .45s ease,transform .45s ease;display:none}
 .page.active{display:block;opacity:1;transform:translateY(0)}
+
+/* ── TOAST ── */
 #toast{position:fixed;top:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
 .toast-msg{background:var(--surface);border:1px solid var(--border2);border-left:3px solid var(--teal);padding:12px 20px;border-radius:var(--radius-sm);font-size:.85rem;box-shadow:var(--shadow);animation:toastIn .3s ease forwards;pointer-events:all}
 .toast-msg.error{border-left-color:var(--red)}
 @keyframes toastIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
-.header{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 36px;height:68px;background:rgba(10,14,26,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+
+/* ── HEADER ── */
+.header{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 36px;height:64px;background:rgba(10,14,26,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,180,.2),rgba(99,157,255,.15),transparent)}
 .logo-wrap{display:flex;align-items:center;gap:12px;cursor:pointer;text-decoration:none}
-.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--teal) 0%,var(--blue) 100%);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:1rem;color:#fff;box-shadow:0 4px 16px rgba(0,212,180,.3);transition:transform .2s,box-shadow .2s}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--teal) 0%,var(--blue) 100%);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:.9rem;color:#fff;box-shadow:0 4px 16px rgba(0,212,180,.3);transition:transform .2s,box-shadow .2s;overflow:hidden}
+.logo-icon img{width:100%;height:100%;object-fit:cover}
 .logo-wrap:hover .logo-icon{transform:scale(1.08);box-shadow:0 6px 24px rgba(0,212,180,.45)}
-.logo-text{font-family:var(--font-head);font-size:1.25rem;font-weight:700;letter-spacing:-.03em}
+.logo-text{font-family:var(--font-head);font-size:1.2rem;font-weight:700;letter-spacing:-.03em}
 .logo-text span{color:var(--teal)}
-.header-badge{background:linear-gradient(135deg,rgba(0,212,180,.12) 0%,rgba(99,157,255,.12) 100%);border:1px solid var(--border2);padding:6px 14px;border-radius:99px;font-size:.75rem;font-family:var(--font-mono);color:var(--teal);letter-spacing:.04em}
+.header-badge{background:linear-gradient(135deg,rgba(0,212,180,.12) 0%,rgba(99,157,255,.12) 100%);border:1px solid var(--border2);padding:5px 13px;border-radius:99px;font-size:.7rem;font-family:var(--font-mono);color:var(--teal);letter-spacing:.06em;display:flex;align-items:center;gap:6px}
+.header-badge::before{content:'';width:5px;height:5px;border-radius:99px;background:var(--teal);animation:pulse-dot 2s infinite}
 .header-right{display:flex;align-items:center;gap:14px}
-.btn-profile{background:rgba(99,157,255,.1);border:1px solid rgba(99,157,255,.2);color:var(--blue);padding:8px 18px;border-radius:99px;font-size:.82rem;font-family:var(--font-body);cursor:pointer;transition:background .2s,border-color .2s;display:none}
+.btn-profile{background:rgba(99,157,255,.08);border:1px solid rgba(99,157,255,.18);color:var(--blue);padding:7px 16px;border-radius:99px;font-size:.8rem;font-family:var(--font-body);cursor:pointer;transition:background .2s,border-color .2s;display:none}
 .btn-profile:hover{background:rgba(99,157,255,.18);border-color:rgba(99,157,255,.35)}
-.progress-wrap{height:3px;background:var(--surface);margin:0;overflow:hidden}
-.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--blue));transition:width .4s ease;width:0%}
-.profile-container{max-width:860px;margin:0 auto;padding:48px 24px 80px}
-.profile-hero{text-align:center;margin-bottom:48px}
-.profile-hero h1{font-family:var(--font-head);font-size:2.6rem;font-weight:800;letter-spacing:-.04em;background:linear-gradient(135deg,var(--text) 30%,var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15}
-.profile-hero p{margin-top:12px;color:var(--muted);font-size:1rem}
+.progress-wrap{height:2px;background:transparent;margin:0;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--blue),var(--purple));transition:width .4s ease;width:0%}
+
+/* ── PROFILE PAGE ── */
+.profile-container{max-width:840px;margin:0 auto;padding:48px 24px 80px}
+.profile-hero{text-align:center;margin-bottom:44px}
+.profile-hero h1{font-family:var(--font-head);font-size:2.5rem;font-weight:800;letter-spacing:-.04em;background:linear-gradient(135deg,var(--text) 30%,var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15}
+.profile-hero p{margin-top:12px;color:var(--muted);font-size:.95rem}
 .steps{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:36px}
 .step-dot{width:8px;height:8px;border-radius:99px;background:var(--dim);transition:width .3s,background .3s}
 .step-dot.active{width:28px;background:var(--teal)}
 .step-dot.done{background:var(--teal2);opacity:.6}
-.form-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;margin-bottom:20px;transition:border-color .2s}
-.form-section:hover{border-color:var(--border2)}
-.section-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
-.section-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.form-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px 30px;margin-bottom:18px;transition:border-color .2s,box-shadow .2s}
+.form-section:hover{border-color:var(--border2);box-shadow:0 4px 24px rgba(0,0,0,.2)}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.section-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
 .section-icon.teal{background:rgba(0,212,180,.12)}
 .section-icon.blue{background:rgba(99,157,255,.12)}
 .section-icon.amber{background:rgba(255,183,64,.12)}
 .section-icon.green{background:rgba(67,217,143,.12)}
-.section-title{font-family:var(--font-head);font-size:1rem;font-weight:700;letter-spacing:-.01em}
-.section-sub{font-size:.78rem;color:var(--muted);margin-top:2px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.section-title{font-family:var(--font-head);font-size:.95rem;font-weight:700;letter-spacing:-.01em}
+.section-sub{font-size:.76rem;color:var(--muted);margin-top:2px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .form-grid.three{grid-template-columns:1fr 1fr 1fr}
-.form-group{display:flex;flex-direction:column;gap:7px}
+.form-group{display:flex;flex-direction:column;gap:6px}
 .form-group.full{grid-column:1/-1}
-label{font-size:.78rem;font-weight:500;color:var(--muted);letter-spacing:.02em;text-transform:uppercase}
-input,select{background:var(--bg);border:1px solid var(--border2);color:var(--text);padding:11px 16px;border-radius:var(--radius-sm);font-size:.9rem;font-family:var(--font-body);outline:none;transition:border-color .2s,box-shadow .2s;appearance:none;-webkit-appearance:none}
-input:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,212,180,.10)}
+label{font-size:.75rem;font-weight:600;color:var(--muted);letter-spacing:.03em;text-transform:uppercase}
+input,select{background:var(--bg);border:1px solid var(--border2);color:var(--text);padding:10px 14px;border-radius:var(--radius-sm);font-size:.88rem;font-family:var(--font-body);outline:none;transition:border-color .2s,box-shadow .2s;appearance:none;-webkit-appearance:none}
+input:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,212,180,.09)}
 input::placeholder{color:var(--dim)}
 select option{background:var(--surface)}
-.radio-group{display:flex;gap:10px;flex-wrap:wrap}
-.radio-btn{flex:1;min-width:70px;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-size:.82rem;color:var(--muted);transition:all .2s;background:var(--bg)}
+.radio-group{display:flex;gap:8px;flex-wrap:wrap}
+.radio-btn{flex:1;min-width:70px;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-size:.8rem;color:var(--muted);transition:all .2s;background:var(--bg)}
 .radio-btn input[type=radio]{display:none}
 .radio-btn.selected{border-color:var(--teal);color:var(--teal);background:rgba(0,212,180,.08)}
-.profile-actions{display:flex;gap:14px;margin-top:32px}
-.btn-primary{flex:1;padding:15px 24px;background:linear-gradient(135deg,var(--teal) 0%,var(--blue) 100%);color:#fff;border:none;border-radius:var(--radius-sm);font-family:var(--font-head);font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:-.01em;transition:opacity .2s,transform .15s,box-shadow .2s;box-shadow:0 4px 20px rgba(0,212,180,.25)}
+.profile-actions{display:flex;gap:12px;margin-top:28px}
+.btn-primary{flex:1;padding:14px 24px;background:linear-gradient(135deg,var(--teal) 0%,var(--blue) 100%);color:#fff;border:none;border-radius:var(--radius-sm);font-family:var(--font-head);font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:-.01em;transition:opacity .2s,transform .15s,box-shadow .2s;box-shadow:0 4px 20px rgba(0,212,180,.25)}
 .btn-primary:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 28px rgba(0,212,180,.35)}
-.btn-secondary{padding:15px 24px;background:transparent;color:var(--muted);border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:.9rem;cursor:pointer;transition:all .2s}
+.btn-secondary{padding:14px 22px;background:transparent;color:var(--muted);border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:.88rem;cursor:pointer;transition:all .2s}
 .btn-secondary:hover{border-color:var(--blue);color:var(--blue)}
 
-/* ── DASHBOARD ── */
-.dashboard{padding:28px 32px 60px;max-width:1440px;margin:0 auto;width:100%}
-.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:24px}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
-.stat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
-.stat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,180,.04) 0%,transparent 60%);pointer-events:none}
-.stat-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
-.stat-value{font-family:var(--font-mono);font-size:2rem;font-weight:700;color:var(--teal);line-height:1}
-.stat-sub{font-size:.75rem;color:var(--muted);text-align:center}
-.stat-badge{font-family:var(--font-mono);font-size:.7rem;padding:3px 10px;border-radius:99px;background:rgba(0,212,180,.10);color:var(--teal);border:1px solid rgba(0,212,180,.2)}
-.speedometer{position:relative;width:130px;height:75px;margin:0 auto}
+/* ═══════════════════════════════════
+   DASHBOARD
+═══════════════════════════════════ */
+.dashboard{padding:22px 28px 60px;max-width:1440px;margin:0 auto;width:100%}
+
+/* ── 3-COL STATS ROW (stress removed from here) ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s,box-shadow .2s}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.stat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,180,.03) 0%,transparent 60%);pointer-events:none}
+.stat-label{font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.stat-value{font-family:var(--font-mono);font-size:1.6rem;font-weight:700;color:var(--teal);line-height:1}
+.stat-sub{font-size:.7rem;color:var(--muted);text-align:center}
+.stat-badge{font-family:var(--font-mono);font-size:.65rem;padding:2px 9px;border-radius:99px;background:rgba(0,212,180,.10);color:var(--teal);border:1px solid rgba(0,212,180,.2)}
+
+/* ── Speedometer ── */
+.speedometer{position:relative;width:110px;height:64px;margin:0 auto}
 .speedometer svg{overflow:visible}
-#needleGroup{transform-origin:65px 70px;transform:rotate(-90deg);transition:transform 1s cubic-bezier(.34,1.56,.64,1)}
-.sleep-ring{position:relative;width:100px;height:100px;margin:0 auto}
+#needleGroup{transform-origin:55px 60px;transform:rotate(-90deg);transition:transform 1s cubic-bezier(.34,1.56,.64,1)}
+
+/* ── Sleep ring ── */
+.sleep-ring{position:relative;width:78px;height:78px;margin:0 auto}
 .sleep-ring svg{transform:rotate(-90deg)}
 #sleepCircle{transition:stroke-dashoffset 1.2s cubic-bezier(.34,1.56,.64,1)}
 .sleep-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--font-mono)}
-.sleep-val{font-size:1.4rem;font-weight:700;color:var(--blue);line-height:1}
-.sleep-unit{font-size:.6rem;color:var(--muted)}
-.score-ring{position:relative;width:110px;height:110px;margin:0 auto}
+.sleep-val{font-size:1.15rem;font-weight:700;color:var(--blue);line-height:1}
+.sleep-unit{font-size:.55rem;color:var(--muted)}
+
+/* ── Score ring ── */
+.score-ring{position:relative;width:86px;height:86px;margin:0 auto}
 .score-ring svg{transform:rotate(-90deg)}
 #scoreCircle{transition:stroke-dashoffset 1.2s cubic-bezier(.34,1.56,.64,1)}
 .score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--font-mono)}
-.score-val{font-size:1.6rem;font-weight:700;color:var(--green);line-height:1}
-.score-pct{font-size:.7rem;color:var(--muted)}
-.content-grid{display:grid;grid-template-columns:1fr 380px;gap:20px}
-.chat-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;height:540px}
-.panel-header{display:flex;align-items:center;gap:10px;padding:18px 22px;border-bottom:1px solid var(--border)}
-.panel-dot{width:8px;height:8px;border-radius:99px;animation:pulse-dot 2s infinite}
-.panel-dot.green{background:var(--green);box-shadow:0 0 8px rgba(67,217,143,.5)}
-.panel-dot.teal{background:var(--teal);box-shadow:0 0 8px rgba(0,212,180,.5)}
-@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
-.panel-title{font-family:var(--font-head);font-size:.95rem;font-weight:700}
-.panel-sub{font-size:.75rem;color:var(--muted);margin-left:auto}
-.chat-messages{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
-.msg{display:flex;gap:10px;animation:msgIn .3s ease}
-@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.score-val{font-size:1.3rem;font-weight:700;color:var(--green);line-height:1}
+.score-pct{font-size:.6rem;color:var(--muted)}
+
+/* ═══════════════════════════════════
+   CONTENT GRID — chat left, panel right
+═══════════════════════════════════ */
+.content-grid{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
+
+/* ═══════════════════════════════════
+   CHAT PANEL
+═══════════════════════════════════ */
+.chat-panel{background:var(--card);border:1px solid rgba(0,212,180,.18);border-radius:var(--radius);display:flex;flex-direction:column;height:580px;box-shadow:0 0 48px rgba(0,212,180,.05),0 16px 48px rgba(0,0,0,.35);position:relative;overflow:hidden}
+.chat-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--teal),var(--blue),transparent);opacity:.4}
+.chat-glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:200px;height:80px;background:radial-gradient(ellipse,rgba(0,212,180,.1) 0%,transparent 70%);pointer-events:none}
+.chat-header{display:flex;align-items:center;padding:0;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,212,180,.06) 0%,rgba(99,157,255,.04) 50%,transparent 100%)}
+.chat-header-inner{display:flex;align-items:center;gap:10px;padding:14px 20px;flex:1}
+.ai-status-ring{position:relative;width:32px;height:32px;flex-shrink:0}
+.ai-avatar{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--teal),var(--blue));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:.75rem;color:#fff;position:relative;z-index:1}
+.ai-status-ring::after{content:'';position:absolute;inset:-3px;border-radius:12px;border:1.5px solid rgba(0,212,180,.4);animation:ringPulse 2.5s ease infinite}
+@keyframes ringPulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.9;transform:scale(1.05)}}
+.chat-header-text{flex:1}
+.chat-title{font-family:var(--font-head);font-size:.95rem;font-weight:700;color:var(--text)}
+.chat-subtitle{font-size:.7rem;color:var(--muted);display:flex;align-items:center;gap:5px}
+.live-dot{width:5px;height:5px;border-radius:99px;background:var(--green);animation:pulse-dot 1.5s infinite}
+.chat-model-badge{margin-left:auto;font-size:.65rem;font-family:var(--font-mono);color:var(--dim);background:rgba(255,255,255,.04);padding:3px 8px;border-radius:6px;border:1px solid var(--border)}
+.chat-messages{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.msg{display:flex;gap:9px;animation:msgIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 .msg.user{flex-direction:row-reverse}
-.msg-avatar{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;font-weight:700}
+.msg-avatar{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0;font-weight:700}
 .msg-avatar.ai{background:linear-gradient(135deg,var(--teal),var(--blue));color:#fff}
-.msg-avatar.user{background:rgba(99,157,255,.15);color:var(--blue);border:1px solid rgba(99,157,255,.25)}
-.msg-bubble{max-width:82%;padding:10px 14px;border-radius:12px;font-size:.87rem;line-height:1.55}
-.msg.ai .msg-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text)}
-.msg.user .msg-bubble{background:rgba(99,157,255,.12);border:1px solid rgba(99,157,255,.2);border-bottom-right-radius:4px;color:var(--text)}
-.decision-tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.7rem;font-family:var(--font-mono);margin-bottom:6px}
-.decision-tag.normal{background:rgba(67,217,143,.12);color:var(--green);border:1px solid rgba(67,217,143,.25)}
-.decision-tag.warning{background:rgba(255,183,64,.12);color:var(--amber);border:1px solid rgba(255,183,64,.25)}
-.decision-tag.critical{background:rgba(255,95,126,.12);color:var(--red);border:1px solid rgba(255,95,126,.25)}
-.typing-indicator{display:flex;gap:5px;align-items:center;padding:8px 0}
-.typing-dot{width:7px;height:7px;border-radius:99px;background:var(--dim);animation:typingBounce 1.2s infinite}
-.typing-dot:nth-child(2){animation-delay:.2s}
-.typing-dot:nth-child(3){animation-delay:.4s}
-@keyframes typingBounce{0%,60%,100%{transform:translateY(0);background:var(--dim)}30%{transform:translateY(-6px);background:var(--teal)}}
-.chat-input-area{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:10px}
-.chat-input{flex:1;background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:10px 16px;border-radius:var(--radius-sm);font-size:.87rem;font-family:var(--font-body);outline:none;transition:border-color .2s;resize:none}
-.chat-input:focus{border-color:var(--teal)}
+.msg-avatar.user{background:rgba(99,157,255,.12);color:var(--blue);border:1px solid rgba(99,157,255,.2)}
+.msg-bubble{max-width:80%;padding:10px 14px;border-radius:13px;font-size:.85rem;line-height:1.6}
+.msg.ai .msg-bubble{background:rgba(20,28,46,.9);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text)}
+.msg.user .msg-bubble{background:rgba(99,157,255,.1);border:1px solid rgba(99,157,255,.18);border-bottom-right-radius:4px;color:var(--text)}
+.thinking-bubble{background:rgba(0,212,180,.06) !important;border-color:rgba(0,212,180,.2) !important;display:flex;align-items:center;gap:10px;padding:10px 14px !important}
+.think-content{display:flex;flex-direction:column;gap:4px}
+.think-label{font-size:.68rem;font-family:var(--font-mono);color:var(--teal);letter-spacing:.05em;opacity:.7}
+.think-dots{display:flex;gap:4px;align-items:center}
+.think-dot{width:6px;height:6px;border-radius:99px;background:var(--teal);animation:thinkBounce 1.3s ease infinite;opacity:.7}
+.think-dot:nth-child(2){animation-delay:.18s;background:var(--blue)}
+.think-dot:nth-child(3){animation-delay:.36s;background:var(--purple)}
+@keyframes thinkBounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+.chat-think-persist{display:flex;align-items:center;gap:6px;padding:0 18px 10px;opacity:0;transition:opacity .4s}
+.chat-think-persist.visible{opacity:1}
+.persist-dots{display:flex;gap:3px}
+.persist-dot{width:5px;height:5px;border-radius:99px;background:var(--teal);opacity:.3;animation:persistPulse 2s ease infinite}
+.persist-dot:nth-child(2){animation-delay:.3s;background:var(--blue)}
+.persist-dot:nth-child(3){animation-delay:.6s;background:var(--purple)}
+@keyframes persistPulse{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:.6;transform:scale(1.1)}}
+.persist-label{font-size:.62rem;font-family:var(--font-mono);color:var(--dim);letter-spacing:.04em}
+.chat-input-area{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:9px;background:rgba(10,14,26,.5)}
+.chat-input{flex:1;background:rgba(17,24,39,.8);border:1px solid var(--border2);color:var(--text);padding:10px 15px;border-radius:var(--radius-sm);font-size:.85rem;font-family:var(--font-body);outline:none;transition:border-color .2s,box-shadow .2s;resize:none}
+.chat-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,212,180,.08)}
 .chat-input::placeholder{color:var(--dim)}
-.send-btn{width:42px;height:42px;background:linear-gradient(135deg,var(--teal),var(--blue));border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .2s,transform .15s;flex-shrink:0;align-self:flex-end}
-.send-btn:hover{opacity:.85;transform:scale(1.06)}
-.send-btn svg{width:18px;height:18px;fill:#fff}
-.right-panel{display:flex;flex-direction:column;gap:20px}
-.stress-card,.reco-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.stress-body{padding:0}
-/* Accordion toggle button */
-.stress-toggle{width:100%;padding:14px 20px;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--font-head);font-size:.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:background .2s}
-.stress-toggle:hover{background:rgba(0,212,180,.05)}
-.stress-toggle-label{display:flex;align-items:center;gap:8px}
-.stress-toggle-chevron{transition:transform .3s;color:var(--teal);font-size:1rem}
-.stress-toggle.open .stress-toggle-chevron{transform:rotate(180deg)}
-/* Accordion fields panel */
-.stress-fields{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1)}
-.stress-fields.open{max-height:600px}
-.stress-fields-inner{padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.sf-group{display:flex;flex-direction:column;gap:5px}
-.sf-label{font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.sf-input{background:var(--bg);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:var(--radius-sm);font-size:.85rem;font-family:var(--font-mono);outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
-.sf-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,212,180,.10)}
-.sf-input::placeholder{color:var(--dim);font-size:.78rem}
-.stress-predict-wrap{padding:0 20px 16px}
-.stress-result{padding:14px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);display:none;margin:0 20px 16px}
-.stress-result.visible{display:block}
-.result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.result-level{font-family:var(--font-head);font-size:1.1rem;font-weight:800;letter-spacing:-.02em}
-.result-score-pct{font-family:var(--font-mono);font-size:.9rem;font-weight:700;color:var(--teal)}
-.result-bar-bg{height:7px;background:var(--dim);border-radius:99px;overflow:hidden;margin-bottom:8px}
-.result-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--teal),var(--amber));transition:width .8s cubic-bezier(.34,1.56,.64,1);width:0%}
-.result-class-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
-.class-badge{padding:2px 9px;border-radius:99px;font-size:.67rem;font-family:var(--font-mono);border:1px solid transparent;opacity:.35;transition:all .3s}
-.class-badge.active{opacity:1;transform:scale(1.05)}
+.send-btn{width:40px;height:40px;background:linear-gradient(135deg,var(--teal),var(--blue));border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .2s,transform .15s,box-shadow .2s;flex-shrink:0;align-self:flex-end;box-shadow:0 4px 14px rgba(0,212,180,.25)}
+.send-btn:hover{opacity:.88;transform:scale(1.07);box-shadow:0 6px 18px rgba(0,212,180,.4)}
+.send-btn svg{width:17px;height:17px;fill:#fff}
+
+/* ═══════════════════════════════════
+   RIGHT PANEL
+═══════════════════════════════════ */
+.right-panel{display:flex;flex-direction:column;gap:16px}
+.stress-card,.reco-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .2s}
+.stress-card{border-color:rgba(0,212,180,.12)}
+.reco-card{border-color:rgba(67,217,143,.1)}
+
+/* ── Panel headers ── */
+.panel-header{display:flex;align-items:center;gap:9px;padding:13px 18px;border-bottom:1px solid var(--border)}
+.panel-header.stress-hdr{background:linear-gradient(90deg,rgba(0,212,180,.06),transparent)}
+.panel-header.reco-hdr{background:linear-gradient(90deg,rgba(67,217,143,.05),transparent)}
+.panel-title{font-family:var(--font-head);font-size:.88rem;font-weight:700}
+.panel-sub{font-size:.68rem;color:var(--dim);margin-left:auto;font-family:var(--font-mono)}
+.panel-dot{width:7px;height:7px;border-radius:99px;animation:pulse-dot 2s infinite;flex-shrink:0}
+.panel-dot.green{background:var(--green);box-shadow:0 0 7px rgba(67,217,143,.5)}
+.panel-dot.teal{background:var(--teal);box-shadow:0 0 7px rgba(0,212,180,.5)}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+/* ── Stress result inside panel (single location only) ── */
+.stress-result-panel{padding:14px 16px;display:none;border-bottom:1px solid var(--border)}
+.stress-result-panel.visible{display:block}
+.srp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.srp-level{font-family:var(--font-head);font-size:1.05rem;font-weight:800;letter-spacing:-.02em}
+.srp-level.level-0{color:var(--green)}
+.srp-level.level-1{color:var(--teal)}
+.srp-level.level-2{color:var(--amber)}
+.srp-level.level-3{color:#ff8c42}
+.srp-level.level-4{color:var(--red)}
+.srp-score{font-family:var(--font-mono);font-size:.85rem;font-weight:700;color:var(--teal)}
+.srp-bar-bg{height:6px;background:var(--dim);border-radius:99px;overflow:hidden;margin-bottom:10px}
+.srp-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--teal),var(--amber));transition:width .8s cubic-bezier(.34,1.56,.64,1);width:0%}
+.srp-badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.class-badge{padding:2px 8px;border-radius:99px;font-size:.62rem;font-family:var(--font-mono);border:1px solid transparent;opacity:.28;transition:all .3s}
+.class-badge.active{opacity:1;transform:scale(1.06)}
 .class-badge.c0{background:rgba(67,217,143,.1);color:var(--green);border-color:rgba(67,217,143,.3)}
 .class-badge.c1{background:rgba(0,212,180,.1);color:var(--teal);border-color:rgba(0,212,180,.3)}
 .class-badge.c2{background:rgba(255,183,64,.1);color:var(--amber);border-color:rgba(255,183,64,.3)}
 .class-badge.c3{background:rgba(255,95,126,.1);color:var(--red);border-color:rgba(255,95,126,.3)}
 .class-badge.c4{background:rgba(255,50,80,.15);color:#ff3250;border-color:rgba(255,50,80,.4)}
-.result-desc{font-size:.77rem;color:var(--muted);line-height:1.5}
-.predict-btn{width:100%;margin-top:12px;padding:12px;background:rgba(0,212,180,.10);border:1px solid rgba(0,212,180,.25);color:var(--teal);border-radius:var(--radius-sm);font-family:var(--font-head);font-size:.88rem;font-weight:700;cursor:pointer;letter-spacing:-.01em;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.predict-btn:hover{background:rgba(0,212,180,.18);border-color:var(--teal)}
-.predict-btn.loading{opacity:.6;pointer-events:none}
-.spinner{width:14px;height:14px;border:2px solid rgba(0,212,180,.3);border-top-color:var(--teal);border-radius:99px;animation:spin .7s linear infinite;display:none}
+.srp-desc{font-size:.74rem;color:var(--muted);line-height:1.5}
+
+/* ── Stress accordion inputs ── */
+.stress-body{padding:0}
+.stress-toggle{width:100%;padding:11px 18px;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--font-head);font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:background .2s}
+.stress-toggle:hover{background:rgba(0,212,180,.04)}
+.stress-toggle-label{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.78rem;font-weight:600}
+.stress-toggle-chevron{transition:transform .3s;color:var(--teal);font-size:.8rem;width:16px;height:16px;display:flex;align-items:center;justify-content:center;background:rgba(0,212,180,.1);border-radius:4px}
+.stress-toggle.open .stress-toggle-chevron{transform:rotate(180deg)}
+.stress-fields{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1)}
+.stress-fields.open{max-height:600px}
+.stress-fields-inner{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sf-group{display:flex;flex-direction:column;gap:4px}
+.sf-label{font-size:.63rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.sf-input{background:var(--bg);border:1px solid var(--border2);color:var(--text);padding:8px 10px;border-radius:8px;font-size:.8rem;font-family:var(--font-mono);outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
+.sf-input:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(0,212,180,.09)}
+.sf-input::placeholder{color:var(--dim);font-size:.72rem}
+.stress-predict-wrap{padding:0 16px 14px}
+.predict-btn{width:100%;margin-top:10px;padding:11px;background:rgba(0,212,180,.08);border:1px solid rgba(0,212,180,.2);color:var(--teal);border-radius:var(--radius-sm);font-family:var(--font-head);font-size:.83rem;font-weight:700;cursor:pointer;letter-spacing:-.01em;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.predict-btn:hover{background:rgba(0,212,180,.15);border-color:var(--teal);box-shadow:0 4px 14px rgba(0,212,180,.15)}
+.predict-btn.loading{opacity:.55;pointer-events:none}
+.spinner{width:13px;height:13px;border:2px solid rgba(0,212,180,.25);border-top-color:var(--teal);border-radius:99px;animation:spin .7s linear infinite;display:none}
 .predict-btn.loading .spinner{display:block}
 @keyframes spin{to{transform:rotate(360deg)}}
-.reco-body{padding:18px 20px}
-.reco-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:8px}
-.reco-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);font-size:.82rem;color:var(--text);line-height:1.45;transition:border-color .2s;animation:msgIn .3s ease}
-.reco-item:hover{border-color:var(--border2)}
-.reco-bullet{width:18px;height:18px;border-radius:5px;background:rgba(0,212,180,.12);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--teal);flex-shrink:0;margin-top:1px}
-.empty-state{text-align:center;padding:30px 20px;color:var(--dim);font-size:.85rem}
-.empty-state .icon{font-size:2rem;margin-bottom:10px;opacity:.4;display:block}
-@media(max-width:900px){.content-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr 1fr}.form-grid.three{grid-template-columns:1fr 1fr}.dashboard{padding:20px 16px 40px}}
-@media(max-width:600px){.stats-row{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.header{padding:0 18px}.profile-container{padding:28px 16px 60px}.profile-hero h1{font-size:2rem}}
+
+/* ═══════════════════════════════════
+   RECOMMENDATIONS — Professional Dropdown
+═══════════════════════════════════ */
+.reco-body{padding:0}
+
+/* Category group */
+.reco-category{border-bottom:1px solid var(--border)}
+.reco-category:last-child{border-bottom:none}
+
+/* Category toggle button */
+.reco-cat-btn{width:100%;padding:11px 16px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .2s;text-align:left}
+.reco-cat-btn:hover{background:rgba(67,217,143,.04)}
+.reco-cat-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
+.reco-cat-icon.diet{background:rgba(67,217,143,.12)}
+.reco-cat-icon.sleep{background:rgba(99,157,255,.12)}
+.reco-cat-icon.stress{background:rgba(255,183,64,.12)}
+.reco-cat-icon.vitals{background:rgba(255,95,126,.12)}
+.reco-cat-icon.exercise{background:rgba(0,212,180,.12)}
+.reco-cat-icon.general{background:rgba(167,139,250,.12)}
+.reco-cat-text{flex:1}
+.reco-cat-title{font-family:var(--font-head);font-size:.8rem;font-weight:700;color:var(--text);display:block}
+.reco-cat-count{font-size:.65rem;color:var(--muted);font-family:var(--font-mono)}
+.reco-cat-chevron{transition:transform .3s;color:var(--dim);font-size:.72rem;flex-shrink:0}
+.reco-cat-btn.open .reco-cat-chevron{transform:rotate(180deg);color:var(--green)}
+
+/* Items list */
+.reco-items{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1)}
+.reco-items.open{max-height:500px}
+.reco-item-list{list-style:none;padding:0 14px 12px}
+.reco-item{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;margin-bottom:6px;background:var(--bg);border-radius:8px;border:1px solid var(--border);font-size:.78rem;color:var(--text);line-height:1.55;transition:border-color .2s,background .2s;animation:fadeInUp .25s ease}
+.reco-item:last-child{margin-bottom:0}
+.reco-item:hover{border-color:var(--border2);background:rgba(99,157,255,.03)}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.reco-bullet{width:16px;height:16px;border-radius:4px;background:rgba(67,217,143,.1);border:1px solid rgba(67,217,143,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.reco-bullet svg{width:8px;height:8px;fill:var(--green)}
+
+/* Empty state */
+.reco-empty{text-align:center;padding:28px 18px;color:var(--dim)}
+.reco-empty-icon{font-size:1.5rem;margin-bottom:10px;opacity:.3;display:block}
+.reco-empty-text{font-size:.8rem;line-height:1.6;color:var(--dim)}
+.reco-empty-hint{margin-top:6px;font-size:.72rem;color:var(--muted);font-family:var(--font-mono)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1100px){.content-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.form-grid.three{grid-template-columns:1fr 1fr}.dashboard{padding:18px 14px 40px}.stats-row{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.header{padding:0 16px}.profile-container{padding:24px 14px 60px}.profile-hero h1{font-size:2rem}}
+@media(max-width:420px){.stats-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div id="toast"></div>
+
 <header class="header">
   <a class="logo-wrap" onclick="goToProfile()" href="#">
-    <img src="{% static 'health.jpeg' %}" alt="logo" style="width:40px;height:40px;">
+    <div class="logo-icon">
+      <img src="{% static 'health.jpeg' %}" alt="logo" />
+    </div>
+    <span class="logo-text">Health<span>Agent</span></span>
   </a>
-
   <div class="header-right">
     <span class="header-badge">AI HEALTH MONITOR</span>
     <button class="btn-profile" id="headerProfileBtn" onclick="goToProfile()">✏️ Edit Profile</button>
@@ -202,7 +312,9 @@ select option{background:var(--surface)}
 </header>
 <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
 
-<!-- PROFILE PAGE -->
+<!-- ════════════════════════════════
+     PROFILE PAGE
+════════════════════════════════ -->
 <div id="profilePage" class="page active">
   <div class="profile-container">
     <div class="profile-hero">
@@ -216,7 +328,6 @@ select option{background:var(--surface)}
       <div class="step-dot" id="step4"></div>
     </div>
 
-    <!-- Body Measurements — gender removed (collected at login) -->
     <div class="form-section">
       <div class="section-header">
         <div class="section-icon teal">📏</div>
@@ -226,8 +337,7 @@ select option{background:var(--surface)}
         <div class="form-group"><label>Height (cm)</label><input type="number" id="height" placeholder="e.g. 175" min="100" max="250"/></div>
         <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" placeholder="e.g. 70" min="30" max="300"/></div>
       </div>
-      <div class="form-grid" style="margin-top:18px">
-        <!-- Gender removed — collected at login -->
+      <div class="form-grid" style="margin-top:16px">
         <div class="form-group full"><label>Activity Level</label>
           <select id="activityLevel">
             <option value="">Select level</option>
@@ -240,7 +350,6 @@ select option{background:var(--surface)}
       </div>
     </div>
 
-    <!-- Lifestyle Habits -->
     <div class="form-section">
       <div class="section-header">
         <div class="section-icon blue">🌙</div>
@@ -269,7 +378,6 @@ select option{background:var(--surface)}
       </div>
     </div>
 
-    <!-- Clinical Vitals -->
     <div class="form-section">
       <div class="section-header">
         <div class="section-icon amber">❤️</div>
@@ -283,13 +391,12 @@ select option{background:var(--surface)}
         <div class="form-group"><label>Body Temperature (°C)</label><input type="number" id="bodyTemperature" placeholder="e.g. 36.6" min="30" max="45" step="0.1"/></div>
         <div class="form-group"><label>SpO₂ Level (%)</label><input type="number" id="oxygenSaturation" placeholder="e.g. 98" min="70" max="100"/></div>
       </div>
-      <div class="form-grid" style="margin-top:18px">
+      <div class="form-grid" style="margin-top:16px">
         <div class="form-group"><label>Existing Conditions</label><input type="text" id="existingConditions" placeholder="e.g. Diabetes, None"/></div>
         <div class="form-group"><label>Current Medications</label><input type="text" id="currentMedications" placeholder="e.g. Metformin, None"/></div>
       </div>
     </div>
 
-    <!-- Nutritional Status -->
     <div class="form-section">
       <div class="section-header">
         <div class="section-icon green">🥗</div>
@@ -327,556 +434,628 @@ select option{background:var(--surface)}
   </div>
 </div>
 
-<!-- DASHBOARD PAGE -->
+<!-- ════════════════════════════════
+     DASHBOARD PAGE
+════════════════════════════════ -->
 <div id="dashboardPage" class="page">
   <div class="dashboard">
+
+    <!-- 3-col stats row — BMI, Sleep, Overall Score only -->
     <div class="stats-row">
+
+      <!-- BMI -->
       <div class="stat-card">
         <div class="stat-label">Body Mass Index</div>
         <div class="speedometer">
-          <svg viewBox="0 0 130 80" width="130" height="80">
-            <path d="M10,70 A60,60 0 0,1 120,70" fill="none" stroke="#1e2640" stroke-width="10" stroke-linecap="round"/>
-            <path d="M10,70 A60,60 0 0,1 40,18" fill="none" stroke="#639dff" stroke-width="10" stroke-linecap="round" opacity="0.4"/>
-            <path d="M40,18 A60,60 0 0,1 90,18" fill="none" stroke="#00d4b4" stroke-width="10" stroke-linecap="round" opacity="0.6"/>
-            <path d="M90,18 A60,60 0 0,1 120,70" fill="none" stroke="#ff5f7e" stroke-width="10" stroke-linecap="round" opacity="0.4"/>
+          <svg viewBox="0 0 110 70" width="110" height="70">
+            <path d="M8,60 A52,52 0 0,1 102,60" fill="none" stroke="#1e2640" stroke-width="8" stroke-linecap="round"/>
+            <path d="M8,60 A52,52 0 0,1 34,16" fill="none" stroke="#639dff" stroke-width="8" stroke-linecap="round" opacity="0.4"/>
+            <path d="M34,16 A52,52 0 0,1 76,16" fill="none" stroke="#00d4b4" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
+            <path d="M76,16 A52,52 0 0,1 102,60" fill="none" stroke="#ff5f7e" stroke-width="8" stroke-linecap="round" opacity="0.4"/>
             <g id="needleGroup">
-              <line x1="65" y1="70" x2="65" y2="20" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-              <circle cx="65" cy="70" r="5" fill="white"/>
+              <line x1="55" y1="60" x2="55" y2="16" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+              <circle cx="55" cy="60" r="4" fill="white"/>
             </g>
           </svg>
         </div>
         <div class="stat-value" id="bmiValue">–</div>
         <div class="stat-badge" id="bmiCategory">–</div>
       </div>
+
+      <!-- Sleep -->
       <div class="stat-card">
         <div class="stat-label">Sleep Quality</div>
         <div class="sleep-ring">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="#1e2640" stroke-width="9"/>
-            <circle id="sleepCircle" cx="50" cy="50" r="40" fill="none" stroke="#639dff" stroke-width="9" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+          <svg viewBox="0 0 78 78" width="78" height="78">
+            <circle cx="39" cy="39" r="31" fill="none" stroke="#1e2640" stroke-width="7"/>
+            <circle id="sleepCircle" cx="39" cy="39" r="31" fill="none" stroke="#639dff" stroke-width="7" stroke-linecap="round" stroke-dasharray="194.8" stroke-dashoffset="194.8"/>
           </svg>
           <div class="sleep-center"><div class="sleep-val" id="sleepVal">–</div><div class="sleep-unit">hrs</div></div>
         </div>
         <div class="stat-sub" id="sleepStatus">–</div>
       </div>
+
+      <!-- Overall Score -->
       <div class="stat-card">
         <div class="stat-label">Overall Score</div>
         <div class="score-ring">
-          <svg viewBox="0 0 110 110" width="110" height="110">
-            <circle cx="55" cy="55" r="44" fill="none" stroke="#1e2640" stroke-width="9"/>
-            <circle id="scoreCircle" cx="55" cy="55" r="44" fill="none" stroke="#43d98f" stroke-width="9" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5"/>
+          <svg viewBox="0 0 86 86" width="86" height="86">
+            <circle cx="43" cy="43" r="34" fill="none" stroke="#1e2640" stroke-width="7"/>
+            <circle id="scoreCircle" cx="43" cy="43" r="34" fill="none" stroke="#43d98f" stroke-width="7" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6"/>
           </svg>
           <div class="score-center"><div class="score-val" id="scoreVal">–</div><div class="score-pct">/ 100</div></div>
         </div>
-        <div class="stat-badge" id="scoreLabel" style="background:rgba(67,217,143,.1);color:var(--green);border-color:rgba(67,217,143,.2)">–</div>
+        <div class="stat-badge" id="scoreLabel" style="background:rgba(67,217,143,.08);color:var(--green);border-color:rgba(67,217,143,.18)">–</div>
       </div>
-    </div>
+
+    </div><!-- /stats-row -->
+
     <div class="content-grid">
+
+      <!-- ── CHAT PANEL ── -->
       <div class="chat-panel">
-        <div class="panel-header">
-          <div class="panel-dot green"></div>
-          <span class="panel-title">AI Health Assistant</span>
-          <span class="panel-sub">Ask anything about your health</span>
+        <div class="chat-glow"></div>
+        <div class="chat-header">
+          <div class="chat-header-inner">
+            <div class="ai-status-ring">
+              <div class="ai-avatar">HA</div>
+            </div>
+            <div class="chat-header-text">
+              <div class="chat-title">AI Health Assistant</div>
+              <div class="chat-subtitle">
+                <span class="live-dot"></span>
+                Online · Personalised to your profile
+              </div>
+            </div>
+            <div class="chat-model-badge">GPT · ML</div>
+          </div>
         </div>
+
         <div class="chat-messages" id="chatMessages">
           <div class="msg ai">
             <div class="msg-avatar ai">HA</div>
             <div class="msg-bubble">Hello! I'm your personal health AI. Your profile has been analysed — ask me anything about your vitals, lifestyle, or how to improve your wellbeing. 💙</div>
           </div>
         </div>
+
+        <div class="chat-think-persist visible" id="chatThinkPersist">
+          <div class="persist-dots">
+            <div class="persist-dot"></div>
+            <div class="persist-dot"></div>
+            <div class="persist-dot"></div>
+          </div>
+          <span class="persist-label">Ready to assist</span>
+        </div>
+
         <div class="chat-input-area">
           <textarea class="chat-input" id="chatInput" rows="1" placeholder="Ask about your health, diet, sleep…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
           <button class="send-btn" onclick="sendMessage()">
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
           </button>
         </div>
-      </div>
+      </div><!-- /chat-panel -->
+
+      <!-- ── RIGHT PANEL ── -->
       <div class="right-panel">
+
+        <!-- Stress Card — single location, accordion input + result together -->
         <div class="stress-card">
-          <div class="panel-header">
+          <div class="panel-header stress-hdr">
             <div class="panel-dot teal"></div>
             <span class="panel-title">Stress Prediction</span>
             <span class="panel-sub">ML Analysis</span>
           </div>
           <div class="stress-body">
-            <!-- Accordion toggle -->
+            <!-- Accordion toggle for inputs -->
             <button class="stress-toggle" id="stressToggle" onclick="toggleStressPanel()">
               <span class="stress-toggle-label">🧠 Enter Biometric Features</span>
               <span class="stress-toggle-chevron" id="stressChevron">▼</span>
             </button>
-            <!-- Accordion fields -->
             <div class="stress-fields" id="stressFields">
               <div class="stress-fields-inner">
-                <div class="sf-group">
-                  <label class="sf-label">Snoring Rate (SNR)</label>
-                  <input class="sf-input" type="number" id="sf-snr" placeholder="0–100" min="0" max="100" step="0.1"/>
-                </div>
-                <div class="sf-group">
-                  <label class="sf-label">Respiration Rate (RR)</label>
-                  <input class="sf-input" type="number" id="sf-rr" placeholder="breaths/min" min="0" max="40" step="0.1"/>
-                </div>
-                <div class="sf-group">
-                  <label class="sf-label">Body Temperature (°C)</label>
-                  <input class="sf-input" type="number" id="sf-bt" placeholder="35–42" min="35" max="42" step="0.1"/>
-                </div>
-                <div class="sf-group">
-                  <label class="sf-label">Limb Movement (LM)</label>
-                  <input class="sf-input" type="number" id="sf-lm" placeholder="0–100" min="0" max="100" step="0.1"/>
-                </div>
-                <div class="sf-group">
-                  <label class="sf-label">Blood Oxygen SpO₂ (%)</label>
-                  <input class="sf-input" type="number" id="sf-bo" placeholder="90–100" min="90" max="100" step="0.1"/>
-                </div>
-                <div class="sf-group">
-                  <label class="sf-label">REM Sleep (hrs)</label>
-                  <input class="sf-input" type="number" id="sf-rem" placeholder="0–10" min="0" max="10" step="0.1"/>
-                </div>
-                <div class="sf-group">
-                  <label class="sf-label">Sleeping Hours (SH)</label>
-                  <input class="sf-input" type="number" id="sf-sh" placeholder="0–12" min="0" max="12" step="0.1"/>
-                </div>
-                <div class="sf-group">
-                  <label class="sf-label">Heart Rate (bpm)</label>
-                  <input class="sf-input" type="number" id="sf-hr" placeholder="40–180" min="40" max="180"/>
-                </div>
+                <div class="sf-group"><label class="sf-label">Snoring Rate (SNR)</label><input class="sf-input" type="number" id="sf-snr" placeholder="0–100" min="0" max="100" step="0.1"/></div>
+                <div class="sf-group"><label class="sf-label">Respiration Rate (RR)</label><input class="sf-input" type="number" id="sf-rr" placeholder="breaths/min" min="0" max="40" step="0.1"/></div>
+                <div class="sf-group"><label class="sf-label">Body Temp (°C)</label><input class="sf-input" type="number" id="sf-bt" placeholder="35–42" min="35" max="42" step="0.1"/></div>
+                <div class="sf-group"><label class="sf-label">Limb Movement (LM)</label><input class="sf-input" type="number" id="sf-lm" placeholder="0–100" min="0" max="100" step="0.1"/></div>
+                <div class="sf-group"><label class="sf-label">SpO₂ (%)</label><input class="sf-input" type="number" id="sf-bo" placeholder="90–100" min="90" max="100" step="0.1"/></div>
+                <div class="sf-group"><label class="sf-label">REM Sleep (hrs)</label><input class="sf-input" type="number" id="sf-rem" placeholder="0–10" min="0" max="10" step="0.1"/></div>
+                <div class="sf-group"><label class="sf-label">Sleeping Hours</label><input class="sf-input" type="number" id="sf-sh" placeholder="0–12" min="0" max="12" step="0.1"/></div>
+                <div class="sf-group"><label class="sf-label">Heart Rate (bpm)</label><input class="sf-input" type="number" id="sf-hr" placeholder="40–180" min="40" max="180"/></div>
+              </div>
+              <div class="stress-predict-wrap">
+                <button class="predict-btn" id="predictBtn" onclick="predictStress()">
+                  <div class="spinner" id="predictSpinner"></div>
+                  <span id="predictBtnText">⚡ Analyse Stress Now</span>
+                </button>
               </div>
             </div>
-            <!-- Result -->
-            <div class="stress-result" id="stressResult">
-              <div class="result-header">
-                <span class="result-level" id="resultLevel">–</span>
-                <span class="result-score-pct" id="resultPct">–%</span>
+
+            <!-- Result appears below accordion, inside same card — single source of truth -->
+            <div class="stress-result-panel" id="stressResultPanel">
+              <div class="srp-row">
+                <span class="srp-level" id="srpLevel">–</span>
+                <span class="srp-score" id="srpScore">–%</span>
               </div>
-              <div class="result-bar-bg"><div class="result-bar-fill" id="resultBarFill"></div></div>
-              <div class="result-class-badges">
+              <div class="srp-bar-bg"><div class="srp-bar-fill" id="srpBarFill"></div></div>
+              <div class="srp-badges">
                 <span class="class-badge c0" id="cb0">0 · Free</span>
                 <span class="class-badge c1" id="cb1">1 · Low</span>
-                <span class="class-badge c2" id="cb2">2 · Moderate</span>
+                <span class="class-badge c2" id="cb2">2 · Mod</span>
                 <span class="class-badge c3" id="cb3">3 · High</span>
-                <span class="class-badge c4" id="cb4">4 · Very High</span>
+                <span class="class-badge c4" id="cb4">4 · V.High</span>
               </div>
-              <div class="result-desc" id="resultDesc"></div>
-            </div>
-            <div class="stress-predict-wrap">
-              <button class="predict-btn" id="predictBtn" onclick="predictStress()">
-                <div class="spinner" id="predictSpinner"></div>
-                <span id="predictBtnText">⚡ Analyse Stress Now</span>
-              </button>
+              <div class="srp-desc" id="srpDesc"></div>
             </div>
           </div>
         </div>
+
+        <!-- Recommendations Card — professional category dropdown -->
         <div class="reco-card">
-          <div class="panel-header">
+          <div class="panel-header reco-hdr">
             <div class="panel-dot green"></div>
             <span class="panel-title">Recommendations</span>
+            <span class="panel-sub" id="recoCountBadge"></span>
           </div>
-          <div class="reco-body">
-            <ul class="reco-list" id="recoList">
-              <li class="empty-state"><span class="icon">💡</span>Recommendations appear after your AI analysis</li>
-            </ul>
+          <div class="reco-body" id="recoBody">
+            <div class="reco-empty">
+              <span class="reco-empty-icon">💡</span>
+              <div class="reco-empty-text">No recommendations yet.</div>
+              <div class="reco-empty-hint">Chat with the AI or run a stress analysis.</div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
+
+      </div><!-- /right-panel -->
+    </div><!-- /content-grid -->
+  </div><!-- /dashboard -->
+</div><!-- /dashboardPage -->
 
 <script>
-  // ================= CONFIG =================
-  const API = {
-    PROFILE_GET: "/api/health/profile/get/",
-    PROFILE_SAVE: "/api/health/profile/save/",
-    STRESS: "/api/health/stress/",
-    CHAT: "/api/health/chat/"
-  };
-
-  let userProfile = null;
-
-  // ================= UTIL =================
-  const Utils = {
-    getCSRFToken() {
-      return document.cookie
-        .split("; ")
-        .find(row => row.startsWith("csrftoken"))
-        ?.split("=")[1];
-    },
-
-    showToast(message, type = "info") {
-      const el = document.createElement("div");
-      el.className = `toast-msg ${type === "error" ? "error" : ""}`;
-      el.textContent = message;
-
-      document.getElementById("toast").appendChild(el);
-      setTimeout(() => el.remove(), 3000);
-    },
-
-    safeNumber(value) {
-      const num = Number(value);
-      return isNaN(num) ? 0 : num;
-    }
-  };
-
-  // ================= PROFILE =================
-  const Profile = {
-
-    async load() {
-      try {
-        const res = await fetch(API.PROFILE_GET);
-        const data = await res.json();
-
-        if (!data.profile) {
-          Navigation.toProfile();
-          return;
-        }
-
-        userProfile = data.profile;
-        localStorage.setItem("profile", JSON.stringify(userProfile));
-
-        this.fillForm(userProfile);
-        Dashboard.load(userProfile);
-        Navigation.toDashboard();
-
-      } catch {
-        Utils.showToast("Failed to load profile", "error");
-      }
-    },
-
-    fillForm(p) {
-      const set = (id, val) => document.getElementById(id).value = val || "";
-
-      set("height", p.height_cm);
-      set("weight", p.weight_kg);
-      set("sleepDuration", p.sleep_hours);
-      set("alcoholConsumption", p.alcohol);
-      set("dietType", p.diet);
-      set("heartRate", p.resting_heart_rate);
-      set("bloodGlucose", p.fasting_blood_sugar);
-      set("cholesterol", p.total_cholesterol);
-
-      if (p.systolic_bp && p.diastolic_bp) {
-        set("bloodPressure", `${p.systolic_bp}/${p.diastolic_bp}`);
-      }
-    },
-
-    async save() {
-      try {
-        const bpVal = document.getElementById("bloodPressure").value;
-        const [sys, dia] = bpVal.includes("/") ? bpVal.split("/") : [0, 0];
-
-        const data = {
-          height_cm: Utils.safeNumber(height.value),
-          weight_kg: Utils.safeNumber(weight.value),
-          sleep_hours: Utils.safeNumber(sleepDuration.value),
-
-          alcohol: alcoholConsumption.value,
-          diet: dietType.value,
-          exercise: activityLevel.value,
-
-          resting_heart_rate: Utils.safeNumber(heartRate.value),
-          systolic_bp: Utils.safeNumber(sys),
-          diastolic_bp: Utils.safeNumber(dia),
-
-          fasting_blood_sugar: Utils.safeNumber(bloodGlucose.value),
-          total_cholesterol: Utils.safeNumber(cholesterol.value)
-        };
-
-        const res = await fetch(API.PROFILE_SAVE, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": Utils.getCSRFToken()
-          },
-          body: JSON.stringify(data)
-        });
-
-        const result = await res.json();
-
-        if (!result.success) throw new Error();
-
-        userProfile = result.profile;
-        localStorage.setItem("profile", JSON.stringify(userProfile));
-
-        Utils.showToast("Profile saved successfully");
-        Dashboard.load(userProfile);
-        Navigation.toDashboard();
-
-      } catch {
-        Utils.showToast("Failed to save profile", "error");
-      }
-    }
-  };
-
-  // ================= DASHBOARD =================
-  const Dashboard = {
-
-    load(p) {
-      if (!p?.height_cm || !p?.weight_kg || p.height_cm <= 0) {
-        Utils.showToast("Invalid height/weight", "error");
-        return;
-      }
-
-      this.renderBMI(p);
-      this.renderSleep(p);
-      this.renderScore(p);
-    },
-
-    renderBMI(p) {
-      const bmi = p.weight_kg / ((p.height_cm / 100) ** 2);
-
-      const elVal = document.getElementById("bmiValue");
-      const elCat = document.getElementById("bmiCategory");
-
-      elVal.textContent = bmi.toFixed(1);
-
-      let cat = "Normal";
-      if (bmi < 18.5) cat = "Underweight";
-      else if (bmi < 25) cat = "Normal";
-      else if (bmi < 30) cat = "Overweight";
-      else cat = "Obese";
-
-      elCat.textContent = cat;
-
-      const pct = Math.min(Math.max((bmi - 15) / 25, 0), 1);
-      document.getElementById("needleGroup")
-        .style.transform = `rotate(${-90 + pct * 180}deg)`;
-    },
-
-    renderSleep(p) {
-      const sleep = p.sleep_hours || 0;
-      document.getElementById("sleepVal").textContent = sleep;
-
-      const circ = 251.2;
-      const percent = Math.min((sleep / 9) * 100, 100);
-
-      document.getElementById("sleepCircle")
-        .style.strokeDashoffset = circ - (circ * percent / 100);
-    },
-
-    renderScore(p) {
-      let score = 60;
-
-      const bmi = p.weight_kg / ((p.height_cm / 100) ** 2);
-
-      if (bmi >= 18.5 && bmi < 25) score += 15;
-      if (p.sleep_hours >= 7) score += 15;
-
-      score = Math.min(score, 100);
-
-      document.getElementById("scoreVal").textContent = score;
-
-      const circ = 276.5;
-      document.getElementById("scoreCircle")
-        .style.strokeDashoffset = circ - (circ * score / 100);
-
-      document.getElementById("scoreLabel").textContent =
-        score > 80 ? "Excellent" : score > 60 ? "Good" : "Needs Work";
-    }
-  };
-
-  // ================= STRESS =================
-  const Stress = {
-
-    getInputs() {
-      const ids = ["sf-snr","sf-rr","sf-bt","sf-lm","sf-bo","sf-rem","sf-sh","sf-hr"];
-
-      for (let id of ids) {
-        if (!document.getElementById(id).value) {
-          Utils.showToast("Fill all stress inputs", "error");
-          return null;
-        }
-      }
-
-      return {
-        snr: +document.getElementById("sf-snr").value,
-        rr: +document.getElementById("sf-rr").value,
-        bt: +document.getElementById("sf-bt").value,
-        lm: +document.getElementById("sf-lm").value,
-        bo: +document.getElementById("sf-bo").value,
-        rem: +document.getElementById("sf-rem").value,
-        sh: +document.getElementById("sf-sh").value,
-        hr: +document.getElementById("sf-hr").value
-      };
-    },
-
-    async predict() {
-      const features = this.getInputs();
-      if (!features) return;
-
-      const btn = document.getElementById("predictBtn");
-      btn.classList.add("loading");
-
-      try {
-        const res = await fetch(API.STRESS, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": Utils.getCSRFToken()
-          },
-          body: JSON.stringify(features)
-        });
-
-        const data = await res.json();
-
-        this.render(data);
-
-      } catch {
-        Utils.showToast("Prediction failed", "error");
-      } finally {
-        btn.classList.remove("loading");
-      }
-    },
-
-    render(data) {
-      document.getElementById("stressResult").classList.add("visible");
-
-      document.getElementById("resultLevel").innerText =
-        data.stress_level || "Unknown";
-
-      document.getElementById("resultPct").innerText =
-        (data.stress_score || 0) + "%";
-
-      document.getElementById("resultBarFill").style.width =
-        (data.stress_score || 0) + "%";
-
-      document.querySelectorAll(".class-badge")
-        .forEach(el => el.classList.remove("active"));
-
-      document.getElementById("cb" + (data.class || 0))
-        ?.classList.add("active");
-
-      Recommendations.update(data.recommendations);
-    }
-  };
-
-  // ================= CHAT =================
-  const Chat = {
-
-    async send() {
-      const input = chatInput;
-      const message = input.value.trim();
-      if (!message) return;
-
-      UI.appendMsg("user", message);
-      input.value = "";
-
-      try {
-        const res = await fetch(API.CHAT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": Utils.getCSRFToken()
-          },
-          credentials: "include",
-          body: JSON.stringify({ message })
-        });
-
-        const data = await res.json();
-
-        UI.appendMsg("ai", data.decision || "No response");
-
-        if (data.recommendations) {
-          Recommendations.update(data.recommendations);
-        }
-
-      } catch {
-        UI.appendMsg("ai", "⚠️ Server error");
-      }
-    }
-  };
-
-  // ================= UI =================
-  const UI = {
-    appendMsg(type, text) {
-      const container = document.getElementById("chatMessages");
-
-      const msg = document.createElement("div");
-      msg.className = "msg " + type;
-
-      msg.innerHTML = `
-        <div class="msg-avatar ${type}">${type === "ai" ? "HA" : "U"}</div>
-        <div class="msg-bubble">${text}</div>
-      `;
-
-      container.appendChild(msg);
-      container.scrollTop = container.scrollHeight;
-    }
-  };
-
-  // ================= RECOMMENDATIONS =================
-  const Recommendations = {
-    update(list) {
-      const el = document.getElementById("recoList");
-      el.innerHTML = "";
-
-      if (!list?.length) {
-        el.innerHTML = "<li>No recommendations</li>";
-        return;
-      }
-
-      list.forEach(item => {
-        const li = document.createElement("li");
-        li.className = "reco-item";
-        li.innerHTML = `<div class="reco-bullet">✓</div>${item}`;
-        el.appendChild(li);
-      });
-    }
-  };
-
-  // ================= NAVIGATION =================
-  const Navigation = {
-    toDashboard() {
-      profilePage.classList.remove("active");
-      dashboardPage.classList.add("active");
-    },
-    toProfile() {
-      dashboardPage.classList.remove("active");
-      profilePage.classList.add("active");
-    }
-  };
-
-  // ================= INIT =================
-  window.onload = () => {
-    const cached = localStorage.getItem("profile");
-
-    if (cached) {
-      userProfile = JSON.parse(cached);
+// ================= CONFIG =================
+const API = {
+  PROFILE_GET:  "/api/health/profile/get/",
+  PROFILE_SAVE: "/api/health/profile/save/",
+  STRESS:       "/api/health/stress/",
+  CHAT:         "/api/health/chat/"
+};
+
+let userProfile = null;
+
+// ================= UTIL =================
+const Utils = {
+  getCSRFToken() {
+    return document.cookie.split("; ").find(r => r.startsWith("csrftoken"))?.split("=")[1];
+  },
+  showToast(message, type = "info") {
+    const el = document.createElement("div");
+    el.className = `toast-msg ${type === "error" ? "error" : ""}`;
+    el.textContent = message;
+    document.getElementById("toast").appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+  },
+  safeNumber(value) {
+    const num = Number(value);
+    return isNaN(num) ? 0 : num;
+  }
+};
+
+// ================= PROFILE =================
+const Profile = {
+  async load() {
+    try {
+      const res  = await fetch(API.PROFILE_GET);
+      const data = await res.json();
+      if (!data.profile) { Navigation.toProfile(); return; }
+      userProfile = data.profile;
+      localStorage.setItem("profile", JSON.stringify(userProfile));
+      this.fillForm(userProfile);
       Dashboard.load(userProfile);
       Navigation.toDashboard();
+    } catch {
+      Utils.showToast("Failed to load profile", "error");
+    }
+  },
+  fillForm(p) {
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ""; };
+    set("height",            p.height_cm);
+    set("weight",            p.weight_kg);
+    set("sleepDuration",     p.sleep_hours);
+    set("alcoholConsumption",p.alcohol);
+    set("dietType",          p.diet);
+    set("activityLevel",     p.exercise);
+    set("heartRate",         p.resting_heart_rate);
+    set("bloodGlucose",      p.fasting_blood_sugar);
+    set("cholesterol",       p.total_cholesterol);
+    if (p.systolic_bp && p.diastolic_bp) set("bloodPressure", `${p.systolic_bp}/${p.diastolic_bp}`);
+  },
+  async save() {
+    try {
+      const bpVal = document.getElementById("bloodPressure").value;
+      const [sys, dia] = bpVal.includes("/") ? bpVal.split("/").map(v => Utils.safeNumber(v)) : [0, 0];
+      const data = {
+        height_cm:          Utils.safeNumber(document.getElementById("height").value),
+        weight_kg:          Utils.safeNumber(document.getElementById("weight").value),
+        sleep_hours:        Utils.safeNumber(document.getElementById("sleepDuration").value),
+        alcohol:            document.getElementById("alcoholConsumption").value,
+        diet:               document.getElementById("dietType").value,
+        exercise:           document.getElementById("activityLevel").value,
+        resting_heart_rate: Utils.safeNumber(document.getElementById("heartRate").value),
+        systolic_bp:        sys,
+        diastolic_bp:       dia,
+        fasting_blood_sugar:Utils.safeNumber(document.getElementById("bloodGlucose").value),
+        total_cholesterol:  Utils.safeNumber(document.getElementById("cholesterol").value)
+      };
+      const res    = await fetch(API.PROFILE_SAVE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": Utils.getCSRFToken() },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (!result.success) throw new Error();
+      userProfile = result.profile;
+      localStorage.setItem("profile", JSON.stringify(userProfile));
+      Utils.showToast("Profile saved successfully");
+      Dashboard.load(userProfile);
+      Navigation.toDashboard();
+    } catch {
+      Utils.showToast("Failed to save profile", "error");
+    }
+  }
+};
+
+// ================= DASHBOARD =================
+const Dashboard = {
+  load(p) {
+    if (!p?.height_cm || !p?.weight_kg || p.height_cm <= 0) {
+      Utils.showToast("Invalid height/weight", "error"); return;
+    }
+    this.renderBMI(p);
+    this.renderSleep(p);
+    this.renderScore(p);
+  },
+  renderBMI(p) {
+    const bmi = p.weight_kg / ((p.height_cm / 100) ** 2);
+    document.getElementById("bmiValue").textContent = bmi.toFixed(1);
+    let cat = bmi < 18.5 ? "Underweight" : bmi < 25 ? "Normal" : bmi < 30 ? "Overweight" : "Obese";
+    document.getElementById("bmiCategory").textContent = cat;
+    const pct = Math.min(Math.max((bmi - 15) / 25, 0), 1);
+    document.getElementById("needleGroup").style.transform = `rotate(${-90 + pct * 180}deg)`;
+  },
+  renderSleep(p) {
+    const sleep = p.sleep_hours || 0;
+    document.getElementById("sleepVal").textContent = sleep;
+    const circ    = 194.8;
+    const percent = Math.min((sleep / 9) * 100, 100);
+    document.getElementById("sleepCircle").style.strokeDashoffset = circ - (circ * percent / 100);
+    document.getElementById("sleepStatus").textContent =
+      sleep >= 8 ? "Optimal" : sleep >= 6 ? "Adequate" : "Insufficient";
+  },
+  renderScore(p) {
+    let score = 60;
+    const bmi = p.weight_kg / ((p.height_cm / 100) ** 2);
+    if (bmi >= 18.5 && bmi < 25) score += 15;
+    if (p.sleep_hours >= 7) score += 15;
+    score = Math.min(score, 100);
+    document.getElementById("scoreVal").textContent = score;
+    const circ = 213.6;
+    document.getElementById("scoreCircle").style.strokeDashoffset = circ - (circ * score / 100);
+    document.getElementById("scoreLabel").textContent =
+      score > 80 ? "Excellent" : score > 60 ? "Good" : "Needs Work";
+  }
+};
+
+// ================= STRESS =================
+const Stress = {
+  getInputs() {
+    const ids = ["sf-snr","sf-rr","sf-bt","sf-lm","sf-bo","sf-rem","sf-sh","sf-hr"];
+    for (const id of ids) {
+      if (!document.getElementById(id).value) {
+        Utils.showToast("Please fill all stress inputs", "error"); return null;
+      }
+    }
+    return {
+      snr: +document.getElementById("sf-snr").value,
+      rr:  +document.getElementById("sf-rr").value,
+      bt:  +document.getElementById("sf-bt").value,
+      lm:  +document.getElementById("sf-lm").value,
+      bo:  +document.getElementById("sf-bo").value,
+      rem: +document.getElementById("sf-rem").value,
+      sh:  +document.getElementById("sf-sh").value,
+      hr:  +document.getElementById("sf-hr").value
+    };
+  },
+  async predict() {
+    const features = this.getInputs();
+    if (!features) return;
+    if (Object.values(features).some(v => isNaN(v))) {
+      Utils.showToast("Invalid input values", "error"); return;
+    }
+    const btn = document.getElementById("predictBtn");
+    btn.classList.add("loading");
+    try {
+      const res  = await fetch(API.STRESS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": Utils.getCSRFToken() },
+        body: JSON.stringify(features)
+      });
+      const data = await res.json();
+      this.render(data);
+    } catch {
+      Utils.showToast("Prediction failed. Try again.", "error");
+    } finally {
+      btn.classList.remove("loading");
+    }
+  },
+  render(data) {
+    // Show result panel (single — inside right panel only)
+    const panel = document.getElementById("stressResultPanel");
+    panel.classList.add("visible");
+
+    const cls   = data.class ?? 0;
+    const score = data.stress_score ?? 0;
+    const level = data.stress_level || "Unknown";
+
+    // Level label with color class
+    const srpLevel = document.getElementById("srpLevel");
+    srpLevel.textContent = level;
+    srpLevel.className   = `srp-level level-${cls}`;
+
+    document.getElementById("srpScore").textContent  = `${score}%`;
+    document.getElementById("srpBarFill").style.width = `${score}%`;
+
+    // Highlight active class badge
+    document.querySelectorAll(".class-badge").forEach(el => el.classList.remove("active"));
+    document.getElementById("cb" + cls)?.classList.add("active");
+
+    // Description map
+    const descs = {
+      0: "No significant stress detected. Your biometrics look healthy — keep up the great work!",
+      1: "Low stress level. Minor physiological indicators observed. Maintain current habits.",
+      2: "Moderate stress detected. Consider relaxation techniques and ensure adequate sleep.",
+      3: "High stress level. Pay attention to your rest, breathing, and workload management.",
+      4: "Very high stress. Please consider speaking with a healthcare professional."
+    };
+    document.getElementById("srpDesc").textContent = descs[cls] || "";
+
+    // Feed recommendations
+    if (data.recommendations) Recommendations.update(data.recommendations);
+  }
+};
+
+// ================= CHAT =================
+const Chat = {
+  async send() {
+    const input   = document.getElementById("chatInput");
+    const message = input.value.trim();
+    if (!message) return;
+
+    UI.appendMsg("user", message);
+    input.value = "";
+    UI.showThinking();
+
+    try {
+      const res  = await fetch(API.CHAT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": Utils.getCSRFToken() },
+        credentials: "include",
+        body: JSON.stringify({ message })
+      });
+      const data = await res.json();
+      UI.hideThinking();
+
+      if (!data.success) {
+        Utils.showToast(data.error || "Something went wrong", "error");
+        UI.appendMsg("ai", "⚠️ " + (data.error || "Something went wrong"));
+        return;
+      }
+      UI.appendMsg("ai", data.decision || "No response received.");
+      if (data.recommendations) Recommendations.update(data.recommendations);
+    } catch {
+      UI.hideThinking();
+      UI.appendMsg("ai", "⚠️ Server error. Please try again.");
+    }
+  }
+};
+
+// ================= UI =================
+const UI = {
+  showThinking() {
+    const container = document.getElementById("chatMessages");
+    const persist   = document.getElementById("chatThinkPersist");
+    if (persist) persist.querySelector(".persist-label").textContent = "Thinking…";
+
+    const el = document.createElement("div");
+    el.id    = "thinkingMsg";
+    el.className = "msg ai";
+    el.innerHTML = `
+      <div class="msg-avatar ai">HA</div>
+      <div class="msg-bubble thinking-bubble">
+        <div class="think-content">
+          <div class="think-label"><span id="thinkLabelText">Analysing data…</span></div>
+          <div class="think-dots">
+            <div class="think-dot"></div>
+            <div class="think-dot"></div>
+            <div class="think-dot"></div>
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(el);
+    container.scrollTop = container.scrollHeight;
+
+    const labels = ["Analysing data…","Reviewing vitals…","Consulting knowledge…","Preparing response…"];
+    let idx = 0;
+    el._labelTimer = setInterval(() => {
+      idx = (idx + 1) % labels.length;
+      const lbl = document.getElementById("thinkLabelText");
+      if (lbl) lbl.textContent = labels[idx];
+    }, 1800);
+  },
+  hideThinking() {
+    const el = document.getElementById("thinkingMsg");
+    if (el) { clearInterval(el._labelTimer); el.remove(); }
+    const persist = document.getElementById("chatThinkPersist");
+    if (persist) persist.querySelector(".persist-label").textContent = "Ready to assist";
+  },
+  appendMsg(type, text) {
+    const container = document.getElementById("chatMessages");
+    const msg       = document.createElement("div");
+    msg.className   = "msg " + type;
+    msg.innerHTML   = `
+      <div class="msg-avatar ${type}">${type === "ai" ? "HA" : "U"}</div>
+      <div class="msg-bubble">${text}</div>`;
+    container.appendChild(msg);
+    container.scrollTop = container.scrollHeight;
+  }
+};
+
+// ================= RECOMMENDATIONS =================
+// Category detection helper — maps keywords to categories
+const RECO_CATEGORIES = [
+  { key: "diet",     label: "Diet & Nutrition",  icon: "🥗", cls: "diet",     keywords: ["diet","eat","food","nutrition","calori","fruit","vegetable","fiber","protein","fat","sugar","carb","meal","drink","water","hydrat"] },
+  { key: "sleep",    label: "Sleep & Recovery",  icon: "🌙", cls: "sleep",    keywords: ["sleep","rest","nap","bedtime","circadian","insomnia","fatigue","recovery","melatonin"] },
+  { key: "stress",   label: "Stress & Mindset",  icon: "🧘", cls: "stress",   keywords: ["stress","anxiety","relax","meditat","breath","mental","mind","calm","yoga","journal","overthink"] },
+  { key: "vitals",   label: "Vitals & Checkups", icon: "❤️", cls: "vitals",   keywords: ["blood","heart","pressure","glucose","cholesterol","oxygen","spo2","checkup","doctor","monitor"] },
+  { key: "exercise", label: "Exercise & Fitness", icon: "🏃", cls: "exercise", keywords: ["exercise","workout","walk","run","gym","fitness","active","strength","cardio","stretch","move","step"] },
+];
+const RECO_GENERAL = { key: "general", label: "General Wellness", icon: "✅", cls: "general" };
+
+function categorizeTip(tip) {
+  const lower = tip.toLowerCase();
+  for (const cat of RECO_CATEGORIES) {
+    if (cat.keywords.some(kw => lower.includes(kw))) return cat;
+  }
+  return RECO_GENERAL;
+}
+
+const Recommendations = {
+  update(list) {
+    const body  = document.getElementById("recoBody");
+    const badge = document.getElementById("recoCountBadge");
+
+    if (!Array.isArray(list) || list.length === 0) {
+      body.innerHTML = `
+        <div class="reco-empty">
+          <span class="reco-empty-icon">🧠</span>
+          <div class="reco-empty-text">No recommendations yet.</div>
+          <div class="reco-empty-hint">Chat with AI or run stress analysis.</div>
+        </div>`;
+      if (badge) badge.textContent = "";
+      return;
     }
 
-    Profile.load();
-  };
-  function markRadio(selectedId, groupIds) {
-    groupIds.forEach(id => {
-      document.getElementById(id).classList.remove("selected");
+    if (badge) badge.textContent = list.length + " tips";
+
+    // Group tips by category
+    const groups = {};
+    list.forEach(tip => {
+      const cat = categorizeTip(tip);
+      if (!groups[cat.key]) groups[cat.key] = { ...cat, tips: [] };
+      groups[cat.key].tips.push(tip);
     });
-    document.getElementById(selectedId).classList.add("selected");
-  }
-  function resetForm() {
-    document.querySelectorAll("input, select").forEach(el => el.value = "");
-    Utils.showToast("Form reset");
-  }
-  function toggleStressPanel() {
-    const panel = document.getElementById("stressFields");
-    const btn = document.getElementById("stressToggle");
 
-    panel.classList.toggle("open");
-    btn.classList.toggle("open");
-  }
-  function goToProfile() {
-    Navigation.toProfile();
-  }
-  function predictStress() {
-    Stress.predict();
-  }
+    body.innerHTML = "";
+    const groupKeys = Object.keys(groups);
 
-  function sendMessage() {
-    Chat.send();
-  }
+    groupKeys.forEach((key, gIdx) => {
+      const group = groups[key];
 
-  function submitProfile() {
-    Profile.save();
+      const section = document.createElement("div");
+      section.className = "reco-category";
+
+      // Toggle button
+      const btn = document.createElement("button");
+      btn.className = "reco-cat-btn" + (gIdx === 0 ? " open" : "");
+      btn.innerHTML = `
+        <div class="reco-cat-icon ${group.cls}">${group.icon}</div>
+        <div class="reco-cat-text">
+          <span class="reco-cat-title">${group.label}</span>
+          <span class="reco-cat-count">${group.tips.length} tip${group.tips.length > 1 ? "s" : ""}</span>
+        </div>
+        <span class="reco-cat-chevron">▼</span>`;
+
+      // Items container
+      const items = document.createElement("div");
+      items.className = "reco-items" + (gIdx === 0 ? " open" : "");
+
+      const ul = document.createElement("ul");
+      ul.className = "reco-item-list";
+      group.tips.forEach((tip, i) => {
+        const li = document.createElement("li");
+        li.className = "reco-item";
+        li.style.animationDelay = (i * 50) + "ms";
+        li.innerHTML = `
+          <div class="reco-bullet">
+            <svg viewBox="0 0 10 8"><path d="M1 4l2.5 2.5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          </div>
+          <span>${tip}</span>`;
+        ul.appendChild(li);
+      });
+      items.appendChild(ul);
+
+      // Toggle behavior
+      btn.addEventListener("click", () => {
+        const isOpen = items.classList.contains("open");
+        // Collapse all
+        document.querySelectorAll(".reco-items").forEach(el => el.classList.remove("open"));
+        document.querySelectorAll(".reco-cat-btn").forEach(el => el.classList.remove("open"));
+        // Open clicked if was closed
+        if (!isOpen) {
+          items.classList.add("open");
+          btn.classList.add("open");
+        }
+      });
+
+      section.appendChild(btn);
+      section.appendChild(items);
+      body.appendChild(section);
+    });
   }
+};
+
+// ================= NAVIGATION =================
+const Navigation = {
+  toDashboard() {
+    document.getElementById("profilePage").classList.remove("active");
+    document.getElementById("dashboardPage").classList.add("active");
+    document.getElementById("headerProfileBtn").style.display = "block";
+  },
+  toProfile() {
+    document.getElementById("dashboardPage").classList.remove("active");
+    document.getElementById("profilePage").classList.add("active");
+  }
+};
+
+// ================= INIT =================
+window.onload = () => {
+  const cached = localStorage.getItem("profile");
+  if (cached) {
+    userProfile = JSON.parse(cached);
+    Dashboard.load(userProfile);
+    Navigation.toDashboard();
+  }
+  Profile.load();
+};
+
+// ================= GLOBAL HELPERS =================
+function markRadio(selectedId, groupIds) {
+  groupIds.forEach(id => document.getElementById(id).classList.remove("selected"));
+  document.getElementById(selectedId).classList.add("selected");
+}
+function resetForm() {
+  document.querySelectorAll("input, select").forEach(el => el.value = "");
+  document.querySelectorAll(".radio-btn").forEach(el => el.classList.remove("selected"));
+  Utils.showToast("Form has been reset");
+}
+function toggleStressPanel() {
+  const panel = document.getElementById("stressFields");
+  const btn   = document.getElementById("stressToggle");
+  panel.classList.toggle("open");
+  btn.classList.toggle("open");
+}
+function goToProfile()   { Navigation.toProfile(); }
+function predictStress() { Stress.predict(); }
+function sendMessage()   { Chat.send(); }
+function submitProfile() { Profile.save(); }
 </script>
 </body>
 </html>

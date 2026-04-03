@@ -35,17 +35,22 @@ Clinical Decision:
 
 
 def get_recommendations(decision_output):
-
     try:
-
         chain = build_recommendation_chain()
 
         result = chain.invoke({
             "decision_output": decision_output
         })
 
-        return result.strip()
+        # ✅ Convert bullet string → list
+        lines = result.strip().split("\n")
+
+        clean_list = [
+            line.replace("•", "").replace("-", "").strip()
+            for line in lines if line.strip()
+        ]
+
+        return clean_list
 
     except Exception as e:
-
-        return "Unable to generate recommendations."
+        return []
