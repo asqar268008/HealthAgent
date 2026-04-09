@@ -16,5 +16,5 @@ def get_embedding():
 
 @lru_cache
 def get_model():
-    return ChatOllama(model="llama3", temperature=0.3, max_tokens=300)
+    return ChatOllama(model="llama3", temperature=0.7, max_tokens=500)
 

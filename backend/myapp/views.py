@@ -5,6 +5,7 @@ All CSRF issues resolved, proper error handling added
 
 import json
 import logging
+from turtle import pd
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
@@ -12,10 +13,8 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.core.exceptions import ValidationError
 from .models import HealthProfile
 from .services.decision import HealthAgent
-from .services.stress import stressService
 from .services.recommendation import get_recommendations
 from django.contrib.auth import get_user_model
 
@@ -377,54 +376,6 @@ def health_decision_agent(request):
             {"success": False, "error": "Failed to generate decision"},
             status=500
         )
-
-
-@login_required
-@require_http_methods(["POST"])
-@csrf_exempt
-def stress_prediction_agent(request):
-    """
-    Predict stress level based on health metrics
-    POST data: {snr, rr, bt, lm, bo, rem, sh, hr}
-    """
-    try:
-        data = json.loads(request.body)
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
-
-    try:
-        result = stressService(request.user, data)
-
-        stress_level = result["stress_level"]
-        stress_score = result["stress_score"]
-
-        # Get recommendations based on stress level
-        recommendation = get_recommendations(
-            f"User stress level is {stress_level}. Provide stress management recommendations."
-        )
-
-        return JsonResponse({
-            "success": True,
-            "agent": "stress_prediction",
-            "stress_level": stress_level,
-            "stress_score": stress_score,
-            "class": result.get("class", 0),   # ✅ ADD THIS
-            "recommendations": recommendation
-        })
-
-    except ValueError as e:
-        logger.warning(f"Stress prediction validation error: {str(e)}")
-        return JsonResponse(
-            {"success": False, "error": str(e)},
-            status=400
-        )
-    except Exception as e:
-        logger.error(f"Stress prediction error: {str(e)}")
-        return JsonResponse(
-            {"success": False, "error": "Failed to predict stress level"},
-            status=500
-        )
-
 
 # ============================================
 # HEALTH SCORE CALCULATION VIEW

@@ -15,6 +15,5 @@ urlpatterns = [
     # HEALTH APIs
     path("api/health/profile/save/", views.save_health_profile),
     path("api/health/profile/get/", views.get_health_profile),
-    path("api/health/stress/", views.stress_prediction_agent),
     path("api/health/chat/", views.health_decision_agent),
 ]
