@@ -3,7 +3,7 @@ Health Agent is an AI-powered web application that helps users analyze basic hea
 
 ---
 
-🚀 Features
+# 🚀 Features
 
 - ✅ Personalized Recommendations
 - ✅ Health Profile Management
@@ -12,7 +12,7 @@ Health Agent is an AI-powered web application that helps users analyze basic hea
 
 ---
 
-🛠️ Tech Stack
+# 🛠️ Tech Stack
 
 - Backend: Django
 - Frontend: HTML, CSS, JavaScript
@@ -21,9 +21,9 @@ Health Agent is an AI-powered web application that helps users analyze basic hea
 
 ---
 
-📦 Project Setup
+# 📦 Project Setup
 
-1️⃣ Clone Repository
+## 1️⃣ Clone Repository
 ```
 git clone https://github.com/asqar268008/HealthAgent.git
 ```
@@ -33,7 +33,7 @@ cd health-agent
 
 ---
 
-2️⃣ Create Virtual Environment (.venv)
+## 2️⃣ Create Virtual Environment (.venv)
 
 🔹 Windows
 ```
@@ -53,14 +53,14 @@ source .venv/bin/activate
 
 ---
 
-3️⃣ Install Dependencies
+## 3️⃣ Install Dependencies
 ```
 pip install -r requirements.txt
 ```
 
 ---
 
-4️⃣ Environment Variables (.env)
+## 4️⃣ Environment Variables (.env)
 
 Create a .env file in root directory:
 ```
@@ -70,7 +70,7 @@ DJANGO_SECRET_KEY = your_django_secret_key
 
 ---
 
-5️⃣ PostgreSQL Setup
+## 5️⃣ PostgreSQL Setup
 
 🔹 Create Database
 
@@ -81,7 +81,7 @@ CREATE DATABASE agentdb;
 
 ---
 
-6️⃣ Apply Migrations
+## 6️⃣ Apply Migrations
 ```
 python manage.py makemigrations
 ```
@@ -91,7 +91,7 @@ python manage.py migrate
 
 ---
 
-7️⃣ Run Server
+## 7️⃣ Run Server
 ```
 python manage.py runserver
 ```
@@ -103,15 +103,14 @@ http://127.0.0.1:8000
 
 ---
 
-📊 Output
+# 📊 Output
 
 * Decision Making
-  
 * Recommendations
   
 ---
 
-📸 Application Preview
+# 📸 Application Preview
 <div align="center"> 
   <img src="img/signin.png" width="45%" />
   <img src="img/signup.png" width="45%" />
@@ -124,7 +123,7 @@ http://127.0.0.1:8000
 
 ---
 
-📌 Future Improvements
+# 📌 Future Improvements
 
 - 🔹 Deep Learning Model
 - 🔹 Wearable Device Integration
@@ -133,12 +132,12 @@ http://127.0.0.1:8000
 
 ---
 
-🤝 Contributing
+# 🤝 Contributing
 
 Feel free to fork and improve this project!
 
 ---
 
-📬 Contact
+# 📬 Contact
 
 If you have suggestions or feedback, feel free to connect 🚀
